@@ -1,50 +1,67 @@
-body {
-    font-family: sans-serif;
-    margin: 0;
-    line-height: 1.6;
+:root {
+  --bg:#fff; --fg:#111; --muted:#6b7280;
+  --accent:#0d6efd; --bd:#e5e7eb; --card:#f9fafb;
+  color-scheme: light;
 }
-header {
-    background: #0d6efd;
-    color: white;
-    padding: 1rem;
+:root.dark {
+  --bg:#111; --fg:#eee; --muted:#9ca3af;
+  --accent:#0d6efd; --bd:#374151; --card:#1f2937;
+  color-scheme: dark;
 }
-nav {display: flex;gap: 1rem;flex-wrap: wrap;}
-nav a {
-    color: white;
-    text-decoration: none;
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif}
+a{color:var(--accent);text-decoration:none}
+/* Smooth theme transition */
+body, header, footer, .card, input, button, nav a{
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease;
 }
-main {
-    padding: 1rem;
-}
-@media (min-width: 600px) {
-    /* Keep nav horizontal on larger screens */
-    nav {flex-direction: row; gap: 1rem;}
-    .grid {display: grid;grid-template-columns: 1fr;gap: 1rem;}
-}
-/* Flexbox */
-#skills ul {
-    display: flex;
-    gap: 1rem;
-    list-style: none;
-    padding: 0;
-}
-#skills li {
-    background: #f0f0f0;
-    padding: 0.5rem 1rem;
-    border-radius: .5rem;
+@media (prefers-reduced-motion: reduce){
+  body, header, footer, .card, input, button, nav a{transition:none}
 }
 
-#hobby ul {
-    display: flex;
-    gap: 1rem;
-    list-style: none;
-    padding: 0;
+.wrap{max-width:1200px;margin:auto;padding:1rem}
+h1{margin:.25rem 0 0}
+h2{margin:1.25rem 0 .5rem;font-size:1.25rem}
+p{margin:.5rem 0}
+
+/* header */
+header{background:#0d6efd;color:#fff}
+header{background:var(--accent)}
+header .wrap{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}
+nav{display:flex;flex-wrap:wrap;gap:.75rem}
+/* Header nav links stay white on blue header */
+header nav a{color:#fff}
+/* Toggle button: base (in content) */
+#toggleTheme{appearance:none;cursor:pointer;font:inherit;border-radius:.5rem;padding:.35rem .6rem;
+  color:var(--fg);background:var(--bg);border:1px solid var(--bd)}
+:root:not(.dark) #toggleTheme:hover,:root:not(.dark) #toggleTheme:focus{background:rgba(0,0,0,.06)}
+:root.dark #toggleTheme:hover,:root.dark #toggleTheme:focus{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+/* Toggle when placed in header */
+header #toggleTheme{color:#fff;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+
+/* เมนู: ถ้าจอกว้าง ให้เรียงแนวนอนอัตโนมัติ */
+@media(min-width:700px){
+  header .wrap{flex-direction:row;justify-content:space-between;align-items:center}
 }
-#hobby li {
-    background: #f0f0f0;
-    padding: 0.5rem 1rem;
-    border-radius: .5rem;
-    margin-bottom: .5rem;
+
+/* list แบบแท็ก */
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:.25rem 0}
+.tags li{border:1px solid var(--bd);padding:.35rem .6rem;border-radius:.5rem;background:var(--card)}
+
+/* form */
+form{display:grid;gap:.5rem;max-width:420px}
+input,button{font:inherit}
+input{width:100%;padding:.5rem .6rem;border:1px solid var(--bd);border-radius:.5rem}
+button{padding:.5rem .8rem;border:1px solid var(--bd);border-radius:.5rem;background:var(--accent);color:#fff;cursor:pointer}
+
+/* projects ใช้ auto-fit grid เพื่อปรับตามจอ */
+#projects .cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1rem;
 }
-#projects .card{display: grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
-.card{border: 1px solid #e7e7eb;border-radius: .5rem;padding: 1rem;}
+.card{border:1px solid var(--bd);border-radius:.5rem;padding:1rem}
+
+/* footer */
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--bd);margin-top:1.5rem}

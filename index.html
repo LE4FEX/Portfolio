@@ -1,56 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="My Profile Page">
-    <meta property="og:title" content="My Profile">
-    <meta property="og:description" content="This is my personal profile page.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="URL_to_image">
-    <title>My Profile</title>
-    <link rel="stylesheet" href="./styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thanapon | Portfolio</title>
+  <meta name="description" content="Frontend Portfolio ของ Thanapon Choysungnuen" />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    // Set initial theme early to avoid flash
+    (function(){
+      try{
+        var saved=localStorage.getItem('theme');
+        var prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme=saved|| (prefersDark? 'dark':'light');
+        if(theme==='dark') document.documentElement.classList.add('dark');
+      }catch(e){}
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <header>
-        <h1>Thanapon Choysungnuen</h1>
-        <nav>
-            <a href="about">About</a>
-            <a href="skills">Skills</a>
-            <a href="contact">Contact</a>
-            <a href="hobby">Hobby</a>
-        </nav>
-    </header>
-    <main>
-        <section id="about">
-            <h2>About Me</h2>
-            <p>I am currently studying coding in order to become a web developer.</p>
-        </section>
-        <section id="skills">
-            <h2>Skills</h2>
-            <ul>
-            <li>HTML</li>
-            <li>CSS</li>
-            <li>JavaScript</li>
-            </ul>
-        </section>
-        <section id="hobby">
-            <h2>Hobby</h2>
-            <ul>
-            <li>Playing games</li>
-            <li>Watch Movie</li>
-            <li>Travel</li>
-            </ul>
-        </section>
-        <Section id="contact">
-            <h2>Contact</h2>
-            <form>
-                <label>Name<input type="text" required></label>
-                <label>Email<input type="email" required></label>
-                <button type="submit">Submit</button>
-            </form>
-        </Section>
-    </main>
-    <footer>© 2025 My Profile</footer>
+  <!-- ส่วนหัว -->
+  <header>
+    <div class="wrap">
+      <h1>Thanapon Choysungnuen</h1>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#hobby">Hobby</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- เนื้อหา -->
+  <main class="wrap">
+    <!-- About -->
+    <section id="about">
+      <h2>About Me</h2>
+      <p>ผมกำลังเรียนการเขียนโค้ดเพื่อพัฒนาทักษะเป็นนักพัฒนาเว็บ</p>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills">
+      <h2>Skills</h2>
+      <ul class="tags">
+        <li>HTML</li><li>CSS</li><li>JavaScript</li>
+        <li>Git</li><li>Responsive Design</li>
+      </ul>
+    </section>
+
+    <!-- Hobby -->
+    <section id="hobby">
+      <h2>Hobby</h2>
+      <ul class="tags">
+        <li>Playing Games</li><li>Watch Movies</li><li>Travel</li>
+      </ul>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <h2>Projects</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>Todo App</h3>
+          <p>แอปจัดการงานพร้อมกรอง ค้นหา และจัดเก็บใน LocalStorage</p>
+          <small>HTML • CSS • JavaScript</small><br>
+          <a href="#" target="_blank">Demo</a> |
+          <a href="#" target="_blank">Code</a>
+        </article>
+
+        <article class="card">
+          <h3>Weather App</h3>
+          <p>เช็คสภาพอากาศเรียลไทม์ผ่าน OpenWeather API</p>
+          <small>JavaScript • API</small><br>
+          <a href="#" target="_blank">Demo</a> |
+          <a href="#" target="_blank">Code</a>
+        </article>
+
+        <article class="card">
+          <h3>Portfolio Website</h3>
+          <p>เว็บไซต์แนะนำตัวเองและรวมผลงาน</p>
+          <small>HTML • CSS</small><br>
+          <a href="#" target="_blank">Demo</a> |
+          <a href="#" target="_blank">Code</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <h2>Contact</h2>
+      <form id="contactForm">
+        <label>ชื่อ <input name="name" required></label>
+        <label>อีเมล <input name="email" type="email" required></label>
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- ส่วนท้าย -->
+  <footer class="wrap">© 2025 Thanapon Choysungnuen</footer>
+  <button id="toggleTheme" type="button" aria-pressed="false">Dark</button>
+  <script>
+    (function(){
+      var root=document.documentElement;
+      var btn=document.getElementById('toggleTheme');
+      function isDark(){return root.classList.contains('dark');}
+      function updateBtn(){
+        var dark=isDark();
+        btn.textContent = dark? 'Light':'Dark';
+        btn.setAttribute('aria-pressed', String(dark));
+        btn.title = dark? 'Switch to light theme':'Switch to dark theme';
+      }
+      function setTheme(mode){
+        if(mode==='dark'){
+          root.classList.add('dark');
+          localStorage.setItem('theme','dark');
+        }else{
+          root.classList.remove('dark');
+          localStorage.setItem('theme','light');
+        }
+        updateBtn();
+      }
+      btn.addEventListener('click', function(){ setTheme(isDark()? 'light':'dark'); });
+      updateBtn();
+    })();
+  </script>
 </body>
 </html>
