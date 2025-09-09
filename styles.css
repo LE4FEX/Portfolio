@@ -1,0 +1,52 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    line-height: 1.6;
+}
+header {
+    background: #0d6efd;
+    color: white;
+    padding: 1rem;
+}
+nav {
+    display: flex;
+    padding: 1rem;
+}
+nav a {
+    color: white;
+    text-decoration: none;
+}
+main {
+    padding: 1rem;
+}
+@media (min-width: 600px) {
+    nav {
+        justify-content: space-around;
+        gap: 1rem;
+    }
+}
+/* Flexbox */
+#skills ul {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+}
+#skills li {
+    background: #f0f0f0;
+    padding: 0.5rem 1rem;
+    border-radius: .5rem;
+}
+
+#hobby ul {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+}
+#hobby li {
+    background: #f0f0f0;
+    padding: 0.5rem 1rem;
+    border-radius: .5rem;
+    margin-bottom: .5rem;
+}
