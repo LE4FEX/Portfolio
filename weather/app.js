@@ -1,5 +1,5 @@
 const API = {
-  key: 'YOUR_API_KEY', // ใส่คีย์ OpenWeather ของคุณ
+  key: '2192b0dc1585a56243ae7c7328937bb5', // ใส่คีย์ OpenWeather ของคุณ
   base: 'https://api.openweathermap.org/data/2.5/weather'
 };
 
