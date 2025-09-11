@@ -1,17 +1,46 @@
 const API = {
-  key: '2192b0dc1585a56243ae7c7328937bb5', // ใส่คีย์ OpenWeather ของคุณ
+  key: '2192b0dc1585a56243ae7c7328937bb5',
   base: 'https://api.openweathermap.org/data/2.5/weather'
 };
 
-const q       = document.getElementById('q');
+const q = document.getElementById('q');
 const unitSel = document.getElementById('unit');
-const geoBtn  = document.getElementById('geoBtn');
-const card    = document.getElementById('card');
-const msg     = document.getElementById('msg');
-const form    = document.getElementById('searchForm');
+const geoBtn = document.getElementById('geoBtn');
+const card = document.getElementById('card');
+const msg = document.getElementById('msg');
+const form = document.getElementById('searchForm');
 const historyEl = document.getElementById('history');
+const themeToggle = document.getElementById('themeToggle');
 
 let timer = null;
+let aborter = null;
+
+// ======= theme =======
+const THEME_KEY = 'weather:theme';
+const root = document.documentElement;
+function getPreferredTheme(){
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === 'dark' || saved === 'light') return saved;
+  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+function applyTheme(theme){
+  if (theme === 'dark') root.setAttribute('data-theme','dark');
+  else root.removeAttribute('data-theme');
+  if (themeToggle) {
+    themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+    themeToggle.setAttribute('aria-label', theme === 'dark' ? 'โหมดสว่าง' : 'โหมดมืด');
+    themeToggle.setAttribute('title', 'สลับธีม');
+  }
+}
+let theme = getPreferredTheme();
+applyTheme(theme);
+if (themeToggle){
+  themeToggle.addEventListener('click', () => {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem(THEME_KEY, theme);
+    applyTheme(theme);
+  });
+}
 
 // ======= load saved =======
 const saved = JSON.parse(localStorage.getItem('weather:last') || 'null');
@@ -26,37 +55,32 @@ renderHistory();
 // ======= events =======
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  const city = q.value.trim();
+  const city = normCity(q.value);
   if (!city) return;
   fetchWeatherByCity(city, unitSel.value);
 });
 
 q.addEventListener('input', () => {
   clearTimeout(timer);
-  const city = q.value.trim();
+  const city = normCity(q.value);
   if (!city) { clearUI(); return; }
   timer = setTimeout(() => fetchWeatherByCity(city, unitSel.value), 500);
 });
 
 unitSel.addEventListener('change', () => {
-  const city = q.value.trim();
+  const city = normCity(q.value);
   if (city) fetchWeatherByCity(city, unitSel.value);
 });
 
 geoBtn.addEventListener('click', () => {
-  if (!navigator.geolocation) {
-    msg.textContent = 'เบราว์เซอร์ไม่รองรับการระบุตำแหน่ง';
-    return;
-  }
+  if (!navigator.geolocation) { msg.textContent = 'เบราว์เซอร์ไม่รองรับการระบุตำแหน่ง'; return; }
   msg.textContent = 'กำลังขอตำแหน่ง...';
   navigator.geolocation.getCurrentPosition(
     pos => {
       const { latitude:lat, longitude:lon } = pos.coords;
       fetchWeatherByCoords(lat, lon, unitSel.value);
     },
-    err => {
-      msg.textContent = 'ไม่สามารถอ่านตำแหน่งได้';
-    },
+    () => { msg.textContent = 'ไม่สามารถอ่านตำแหน่งได้'; },
     { enableHighAccuracy:true, timeout:10000, maximumAge:300000 }
   );
 });
@@ -72,21 +96,26 @@ async function fetchWeatherByCoords(lat, lon, units='metric') {
 }
 
 async function fetchAndRender(url, units, fallbackCity) {
+  if (!navigator.onLine) { clearUI(); msg.textContent = 'ออฟไลน์อยู่ ตรวจการเชื่อมต่อ'; return; }
+
+  // ยกเลิกคำขอเก่าเมื่อมีคำขอใหม่
+  if (aborter) aborter.abort();
+  aborter = new AbortController();
+
   try {
     setLoading(true);
     msg.textContent = '';
-    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: aborter.signal });
+    if (!res.ok) throw new Error(`HTTP_${res.status}`);
     const data = await res.json();
     render(data, units);
     const cityName = data.name || fallbackCity || '';
-    // cache last
     localStorage.setItem('weather:last', JSON.stringify({ city: cityName, unit: units }));
-    // update history
     addHistory(cityName, units);
   } catch (err) {
+    if (err.name === 'AbortError') return; // ถูกยกเลิก
     clearUI();
-    msg.textContent = 'ไม่พบเมือง หรือเกิดข้อผิดพลาดในการดึงข้อมูล';
+    msg.textContent = prettyError(err);
   } finally {
     setLoading(false);
   }
@@ -95,14 +124,10 @@ async function fetchAndRender(url, units, fallbackCity) {
 // ======= history =======
 function addHistory(city, unit){
   if (!city) return;
-  // ลบ city เดิมถ้ามี แล้ว unshift
   const next = history.filter(h => h.city.toLowerCase() !== city.toLowerCase());
   next.unshift({ city, unit, ts: Date.now() });
-  // จำกัด 5 รายการ
   while (next.length > 5) next.pop();
-  // เขียนกลับ
   localStorage.setItem('weather:history', JSON.stringify(next));
-  // อัปเดตตัวแปรในหน่วยความจำและวาดใหม่
   history.length = 0; next.forEach(x => history.push(x));
   renderHistory();
 }
@@ -136,6 +161,8 @@ function render(d, units) {
   const temp = round(d.main?.temp);
   const humid = d.main?.humidity ?? '-';
   const wind = d.wind?.speed != null ? `${d.wind.speed}${units==='imperial'?' mph':' m/s'}` : '-';
+  const sunrise = d.sys?.sunrise ? timeFromUnix(d.sys.sunrise, d.timezone) : '-';
+  const sunset  = d.sys?.sunset  ? timeFromUnix(d.sys.sunset , d.timezone) : '-';
 
   card.innerHTML = `
     <h2 class="city">${d.name || ''}${d.sys?.country ? `, ${d.sys.country}`:''}</h2>
@@ -149,20 +176,32 @@ function render(d, units) {
     <div class="row" style="margin-top:.5rem">
       <span class="badge">ความชื้น ${humid}%</span>
       <span class="badge">ลม ${wind}</span>
-      <span class="badge">ความกดอากาศ ${d.main?.pressure ?? '-'} hPa</span>
+      <span class="badge">พระอาทิตย์ขึ้น ${sunrise}</span>
+      <span class="badge">ตก ${sunset}</span>
     </div>
   `;
   card.classList.remove('hidden');
 }
 
 // ======= helpers =======
-function clearUI() {
-  card.classList.add('hidden');
-  card.innerHTML = '';
-}
-function setLoading(v) {
-  card.classList.toggle('loading', v);
-}
+function normCity(s){ return (s || '').trim().replace(/\s+/g,' '); }
+function clearUI(){ card.classList.add('hidden'); card.innerHTML=''; }
+function setLoading(v){ card.classList.toggle('loading', v); }
 function round(x){ return x!=null ? Math.round(x) : '-'; }
 function capitalize(s){ return s ? s[0].toUpperCase()+s.slice(1) : ''; }
 function escapeHtml(str){ const d=document.createElement('div'); d.innerText=str; return d.innerHTML; }
+function timeFromUnix(unix, tzOffsetSec){
+  const ms = (unix + (tzOffsetSec||0)) * 1000;
+  const d = new Date(ms);
+  // แสดงเป็น HH:MM ตามโซนของเมืองนั้น
+  const hh = String(d.getUTCHours()).padStart(2,'0');
+  const mm = String(d.getUTCMinutes()).padStart(2,'0');
+  return `${hh}:${mm}`;
+}
+function prettyError(err){
+  const code = String(err.message || '').replace('Error:','').trim();
+  if (code.startsWith('HTTP_401')) return 'คีย์ API ไม่ถูกต้องหรือยังไม่พร้อมใช้งาน';
+  if (code.startsWith('HTTP_404')) return 'ไม่พบเมืองตามที่ค้นหา';
+  if (code.startsWith('HTTP_429')) return 'เรียก API บ่อยเกินไป (rate limit)';
+  return 'เกิดข้อผิดพลาดในการดึงข้อมูล';
+}
