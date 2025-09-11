@@ -1,17 +1,19 @@
-:root {
+:root{
   --bg:#fff; --fg:#111; --muted:#6b7280;
   --accent:#0d6efd; --bd:#e5e7eb; --card:#f9fafb;
   color-scheme: light;
 }
-:root.dark {
+:root.dark{
   --bg:#111; --fg:#eee; --muted:#9ca3af;
-  --accent:#0d6efd; --bd:#374151; --card:#1f2937;
+  --accent:#8aa3ff; --bd:#374151; --card:#1f2937;
   color-scheme: dark;
 }
+
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);
   font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif}
 a{color:var(--accent);text-decoration:none}
+
 /* Smooth theme transition */
 body, header, footer, .card, input, button, nav a{
   transition: background-color .25s ease, color .25s ease, border-color .25s ease;
@@ -26,21 +28,19 @@ h2{margin:1.25rem 0 .5rem;font-size:1.25rem}
 p{margin:.5rem 0}
 
 /* header */
-header{background:#0d6efd;color:#fff}
-header{background:var(--accent)}
+header{background:var(--accent);color:#fff}
 header .wrap{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}
 nav{display:flex;flex-wrap:wrap;gap:.75rem}
-/* Header nav links stay white on blue header */
 header nav a{color:#fff}
-/* Toggle button: base (in content) */
-#toggleTheme{appearance:none;cursor:pointer;font:inherit;border-radius:.5rem;padding:.35rem .6rem;
-  color:var(--fg);background:var(--bg);border:1px solid var(--bd)}
-:root:not(.dark) #toggleTheme:hover,:root:not(.dark) #toggleTheme:focus{background:rgba(0,0,0,.06)}
-:root.dark #toggleTheme:hover,:root.dark #toggleTheme:focus{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
-/* Toggle when placed in header */
-header #toggleTheme{color:#fff;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
 
-/* เมนู: ถ้าจอกว้าง ให้เรียงแนวนอนอัตโนมัติ */
+/* toggle in header */
+#toggleTheme{
+  appearance:none;cursor:pointer;font:inherit;border-radius:.5rem;padding:.35rem .6rem;
+  color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28)
+}
+#toggleTheme:hover,#toggleTheme:focus{background:rgba(255,255,255,.18)}
+
+/* จอใหญ่: header จัดเป็นแถว */
 @media(min-width:700px){
   header .wrap{flex-direction:row;justify-content:space-between;align-items:center}
 }
@@ -52,14 +52,13 @@ header #toggleTheme{color:#fff;background:rgba(255,255,255,.12);border-color:rgb
 /* form */
 form{display:grid;gap:.5rem;max-width:420px}
 input,button{font:inherit}
-input{width:100%;padding:.5rem .6rem;border:1px solid var(--bd);border-radius:.5rem}
+input{width:100%;padding:.5rem .6rem;border:1px solid var(--bd);border-radius:.5rem;background:var(--bg);color:var(--fg)}
 button{padding:.5rem .8rem;border:1px solid var(--bd);border-radius:.5rem;background:var(--accent);color:#fff;cursor:pointer}
 
-/* projects ใช้ auto-fit grid เพื่อปรับตามจอ */
+/* projects responsive */
 #projects .cards{
-  display:grid;
+  display:grid; gap:1rem;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:1rem;
 }
 .card{border:1px solid var(--bd);border-radius:.5rem;padding:1rem}
 

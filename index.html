@@ -12,7 +12,7 @@
       try{
         var saved=localStorage.getItem('theme');
         var prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var theme=saved|| (prefersDark? 'dark':'light');
+        var theme=saved||(prefersDark?'dark':'light');
         if(theme==='dark') document.documentElement.classList.add('dark');
       }catch(e){}
     })();
@@ -30,6 +30,7 @@
         <a href="#hobby">Hobby</a>
         <a href="#projects">Projects</a>
         <a href="#contact">Contact</a>
+        <button id="toggleTheme" type="button" aria-pressed="false" title="Switch to dark theme">Dark</button>
       </nav>
     </div>
   </header>
@@ -67,24 +68,24 @@
           <h3>Todo App</h3>
           <p>แอปจัดการงานพร้อมกรอง ค้นหา และจัดเก็บใน LocalStorage</p>
           <small>HTML • CSS • JavaScript</small><br>
-          <a href="#" target="_blank">Demo</a> |
-          <a href="#" target="_blank">Code</a>
+          <a href="#" target="_blank" rel="noopener noreferrer">Demo</a> |
+          <a href="#" target="_blank" rel="noopener noreferrer">Code</a>
         </article>
 
         <article class="card">
           <h3>Weather App</h3>
-          <p>เช็คสภาพอากาศเรียลไทม์ผ่าน OpenWeather API</p>
+          <p>Realtime from OpenWeather API</p>
           <small>JavaScript • API</small><br>
-          <a href="#" target="_blank">Demo</a> |
-          <a href="#" target="_blank">Code</a>
+          <a href="weather/" target="_blank" rel="noopener">Demo</a> |
+          <a href="https://github.com/LE4FEX/Portfolio/tree/main/weather" target="_blank" rel="noopener noreferrer">Code</a>
         </article>
 
         <article class="card">
           <h3>Portfolio Website</h3>
           <p>เว็บไซต์แนะนำตัวเองและรวมผลงาน</p>
           <small>HTML • CSS</small><br>
-          <a href="#" target="_blank">Demo</a> |
-          <a href="#" target="_blank">Code</a>
+          <a href="#" target="_blank" rel="noopener noreferrer">Demo</a> |
+          <a href="#" target="_blank" rel="noopener noreferrer">Code</a>
         </article>
       </div>
     </section>
@@ -102,7 +103,7 @@
 
   <!-- ส่วนท้าย -->
   <footer class="wrap">© 2025 Thanapon Choysungnuen</footer>
-  <button id="toggleTheme" type="button" aria-pressed="false">Dark</button>
+
   <script>
     (function(){
       var root=document.documentElement;
@@ -129,4 +130,4 @@
     })();
   </script>
 </body>
-</html
+</html>
