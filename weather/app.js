@@ -96,7 +96,20 @@ async function fetchWeatherByCoords(lat, lon, units='metric') {
 }
 
 async function fetchAndRender(url, units, fallbackCity) {
-  if (!navigator.onLine) { clearUI(); msg.textContent = 'ออฟไลน์อยู่ ตรวจการเชื่อมต่อ'; return; }
+  if (!navigator.onLine) {
+    try {
+      const cached = await caches.match(url);
+      if (cached) {
+        const data = await cached.json();
+        render(data, units);
+        msg.textContent = 'ออฟไลน์: แสดงข้อมูลจากแคช';
+        return;
+      }
+    } catch (_) {}
+    clearUI();
+    msg.textContent = 'ออฟไลน์อยู่ ตรวจการเชื่อมต่อ';
+    return;
+  }
 
   // ยกเลิกคำขอเก่าเมื่อมีคำขอใหม่
   if (aborter) aborter.abort();
