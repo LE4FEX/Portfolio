@@ -35,7 +35,11 @@ function applyTheme(theme){
     themeToggle.setAttribute('aria-label', dark ? 'โหมดสว่าง' : 'โหมดมืด');
     themeToggle.setAttribute('title', 'สลับธีม');
   }
-  if (themeMeta) themeMeta.setAttribute('content', dark ? '#0f141a' : '#f7f7f7');
+  if (themeMeta) {
+    const styles = window.getComputedStyle(root);
+    const panel = styles.getPropertyValue('--panel').trim();
+    themeMeta.setAttribute('content', panel || (dark ? '#08233a' : '#dff3ff'));
+  }
 }
 let theme = getPreferredTheme();
 applyTheme(theme);
