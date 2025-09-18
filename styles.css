@@ -3,7 +3,8 @@
   --accent:#0d6efd; --bd:#e5e7eb; --card:#f9fafb;
   color-scheme: light;
 }
-:root.dark{
+:root.dark,
+:root[data-theme="dark"]{
   --bg:#111; --fg:#eee; --muted:#9ca3af;
   --accent:#8aa3ff; --bd:#374151; --card:#1f2937;
   color-scheme: dark;

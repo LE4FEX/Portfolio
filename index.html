@@ -10,10 +10,13 @@
     // Set initial theme early to avoid flash
     (function(){
       try{
+        var root=document.documentElement;
         var saved=localStorage.getItem('theme');
         var prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
         var theme=saved||(prefersDark?'dark':'light');
-        if(theme==='dark') document.documentElement.classList.add('dark');
+        var isDark=theme==='dark';
+        root.classList.toggle('dark', isDark);
+        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
       }catch(e){}
     })();
   </script>
@@ -108,25 +111,43 @@
     (function(){
       var root=document.documentElement;
       var btn=document.getElementById('toggleTheme');
-      function isDark(){return root.classList.contains('dark');}
-      function updateBtn(){
-        var dark=isDark();
-        btn.textContent = dark? 'Light':'Dark';
+      if(!btn) return;
+
+      function applyTheme(mode){
+        var dark = mode === 'dark';
+        root.classList.toggle('dark', dark);
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        btn.textContent = dark ? 'Light' : 'Dark';
         btn.setAttribute('aria-pressed', String(dark));
-        btn.title = dark? 'Switch to light theme':'Switch to dark theme';
+        btn.title = dark ? 'Switch to light theme' : 'Switch to dark theme';
       }
-      function setTheme(mode){
-        if(mode==='dark'){
-          root.classList.add('dark');
-          localStorage.setItem('theme','dark');
-        }else{
-          root.classList.remove('dark');
-          localStorage.setItem('theme','light');
+
+      function storeTheme(mode){
+        try{ localStorage.setItem('theme', mode); }
+        catch(e){}
+      }
+
+      function currentTheme(){
+        return root.classList.contains('dark') ? 'dark' : 'light';
+      }
+
+      function setTheme(mode, skipStore){
+        applyTheme(mode);
+        if(!skipStore) storeTheme(mode);
+      }
+
+      btn.addEventListener('click', function(){
+        setTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+      });
+
+      window.addEventListener('storage', function(event){
+        if(event.key === 'theme'){
+          var next = event.newValue === 'dark' ? 'dark' : 'light';
+          setTheme(next, true);
         }
-        updateBtn();
-      }
-      btn.addEventListener('click', function(){ setTheme(isDark()? 'light':'dark'); });
-      updateBtn();
+      });
+
+      applyTheme(currentTheme());
     })();
   </script>
 </body>

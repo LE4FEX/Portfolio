@@ -16,31 +16,44 @@ let timer = null;
 let aborter = null;
 
 // ======= theme =======
-const THEME_KEY = 'weather:theme';
+const THEME_KEY = 'theme';
 const root = document.documentElement;
 function getPreferredTheme(){
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved === 'dark' || saved === 'light') return saved;
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === 'dark' || saved === 'light') return saved;
+  } catch (_) {}
   return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
+const themeMeta = document.querySelector('meta[name="theme-color"]');
 function applyTheme(theme){
-  if (theme === 'dark') root.setAttribute('data-theme','dark');
-  else root.removeAttribute('data-theme');
+  const dark = theme === 'dark';
+  root.classList.toggle('dark', dark);
+  root.setAttribute('data-theme', dark ? 'dark' : 'light');
   if (themeToggle) {
-    themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-    themeToggle.setAttribute('aria-label', theme === 'dark' ? 'โหมดสว่าง' : 'โหมดมืด');
+    themeToggle.textContent = dark ? '☀️' : '🌙';
+    themeToggle.setAttribute('aria-label', dark ? 'โหมดสว่าง' : 'โหมดมืด');
     themeToggle.setAttribute('title', 'สลับธีม');
   }
+  if (themeMeta) themeMeta.setAttribute('content', dark ? '#0f141a' : '#f7f7f7');
 }
 let theme = getPreferredTheme();
 applyTheme(theme);
 if (themeToggle){
   themeToggle.addEventListener('click', () => {
     theme = theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem(THEME_KEY, theme);
+    try { localStorage.setItem(THEME_KEY, theme); }
+    catch (_) {}
     applyTheme(theme);
   });
 }
+
+window.addEventListener('storage', (event) => {
+  if (event.key === THEME_KEY) {
+    theme = event.newValue === 'dark' ? 'dark' : 'light';
+    applyTheme(theme);
+  }
+});
 
 // ======= load saved =======
 const saved = JSON.parse(localStorage.getItem('weather:last') || 'null');

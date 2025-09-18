@@ -10,7 +10,8 @@
   --accent:#6b7280;   /* subtle focus */
 }
 
-html[data-theme="dark"]{
+:root.dark,
+:root[data-theme="dark"]{
   /* Dark lofi palette */
   --bg:    #0e1116;
   --panel: #0f141a;
