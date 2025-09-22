@@ -11,6 +11,7 @@ const msg = document.getElementById('msg');
 const form = document.getElementById('searchForm');
 const historyEl = document.getElementById('history');
 const themeToggle = document.getElementById('themeToggle');
+const kvKey = 'weather:kv'; // {"<unit>:<cityLower>": dataJSON, ... }
 
 let timer = null;
 let aborter = null;
@@ -114,11 +115,15 @@ async function fetchWeatherByCoords(lat, lon, units='metric') {
 
 async function fetchAndRender(url, units, fallbackCity) {
   if (!navigator.onLine) {
+    const cachedLocal = fallbackCity ? kvGet(fallbackCity, units) : null;
+    if (cachedLocal) { render(cachedLocal, units); msg.textContent = 'แสดงจากแคชโลคัล • กำลังอัปเดตข้อมูล'; }
     try {
       const cached = await caches.match(url);
       if (cached) {
         const data = await cached.json();
         render(data, units);
+        const cachedCity = data.name || fallbackCity || '';
+        kvSet(cachedCity, units, data);
         msg.textContent = 'ออฟไลน์: แสดงข้อมูลจากแคช';
         return;
       }
@@ -163,22 +168,38 @@ function addHistory(city, unit){
 }
 
 function renderHistory(){
-  if (!history.length){ historyEl.innerHTML=''; return; }
-  historyEl.innerHTML = history.map(h => `
-    <span class="chip">
-      <button type="button" data-city="${escapeHtml(h.city)}" data-unit="${h.unit}">
-        ${escapeHtml(h.city)} ${h.unit==='imperial'?'(°F)':'(°C)'}
-      </button>
-    </span>
-  `).join('');
+  if (!history.length){
+    historyEl.innerHTML=''; 
+  } else {
+    historyEl.innerHTML = history.map(h => `
+      <span class="chip">
+        <button type="button" data-city="${escapeHtml(h.city)}" data-unit="${h.unit}">
+          ${escapeHtml(h.city)} ${h.unit==='imperial'?'(°F)':'(°C)'}
+        </button>
+        <button class="rm" type="button" data-rm="${escapeHtml(h.city)}" title="ลบ">✕</button>
+      </span>
+    `).join('') + ` <button id="clearHist" type="button" class="chip">ล้างประวัติ</button>`;
+  }
+
   historyEl.onclick = (e)=>{
+    const del = e.target.closest('button[data-rm]');
+    if (del){
+      const city = del.getAttribute('data-rm');
+      const next = history.filter(h => h.city.toLowerCase() !== city.toLowerCase());
+      localStorage.setItem('weather:history', JSON.stringify(next));
+      history.length = 0; next.forEach(x=>history.push(x));
+      renderHistory();
+      return;
+    }
+    if (e.target.id === 'clearHist'){
+      localStorage.removeItem('weather:history');
+      history.length = 0; renderHistory(); return;
+    }
     const b = e.target.closest('button[data-city]');
     if (!b) return;
     const city = b.getAttribute('data-city');
     const unit = b.getAttribute('data-unit') || 'metric';
-    q.value = city;
-    unitSel.value = unit;
-    fetchWeatherByCity(city, unit);
+    q.value = city; unitSel.value = unit; fetchWeatherByCity(city, unit);
   };
 }
 
@@ -240,11 +261,27 @@ function prettyError(err){
 function showSkeleton(){
   card.innerHTML = `
     <div class="skel">
-      <div class="bar" style="widgth:40%></div>
+      <div class="bar" style="width:40%"></div>
       <div class="bar" style="height:2.2rem;width:30%"></div>
       <div class="bar" style="width:60%"></div>
       <div class="bar" style="width:80%"></div>
     </div>
   `;
   card.classList.remove('hidden');
+}
+
+// ======= kvKey =======
+function kvSet(city, unit, data){
+  const k = `${unit}:${(city||'').toLowerCase()}`;
+  const kv = JSON.parse(localStorage.getItem(kvKey) || '{}');
+  kv[k] = {data, ts: Date.now()};
+  // limit to 5 entries
+  const entries = Object.entries(kv).sort((a,b)=>b[1].ts - a[1].ts).slice(0,5);
+  localStorage.setItem(kvKey, JSON.stringify(Object.fromEntries(entries)));
+}
+
+function kvGet(city, unit){
+  const k = `${unit}:${(city||'').toLowerCase()}`;
+  const kv = JSON.parse(localStorage.getItem(kvKey) || '{}');
+  return kv[k]?.data || null;
 }
