@@ -1,6 +1,5 @@
 const API = {
-  key: '2192b0dc1585a56243ae7c7328937bb5',
-  base: 'https://api.openweathermap.org/data/2.5/weather'
+  base: '/.netlify/functions/weather',
 };
 
 const q = document.getElementById('q');
@@ -105,11 +104,11 @@ geoBtn.addEventListener('click', () => {
 
 // ======= fetchers =======
 async function fetchWeatherByCity(city, units='metric') {
-  const url = `${API.base}?q=${encodeURIComponent(city)}&appid=${API.key}&units=${units}&lang=th`;
+  const url = `${API.base}?q=${encodeURIComponent(city)}&units=${units}`;
   return fetchAndRender(url, units, city);
 }
 async function fetchWeatherByCoords(lat, lon, units='metric') {
-  const url = `${API.base}?lat=${lat}&lon=${lon}&appid=${API.key}&units=${units}&lang=th`;
+  const url = `${API.base}?lat=${lat}&lon=${lon}&units=${units}`;
   return fetchAndRender(url, units);
 }
 
