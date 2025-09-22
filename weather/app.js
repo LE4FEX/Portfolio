@@ -235,3 +235,16 @@ function prettyError(err){
   if (code.startsWith('HTTP_429')) return 'เรียก API บ่อยเกินไป (rate limit)';
   return 'เกิดข้อผิดพลาดในการดึงข้อมูล';
 }
+
+// ======= Skeleton =======
+function showSkeleton(){
+  card.innerHTML = `
+    <div class="skel">
+      <div class="bar" style="widgth:40%></div>
+      <div class="bar" style="height:2.2rem;width:30%"></div>
+      <div class="bar" style="width:60%"></div>
+      <div class="bar" style="width:80%"></div>
+    </div>
+  `;
+  card.classList.remove('hidden');
+}

@@ -169,3 +169,9 @@ h1{margin:0;font-weight:600}
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important;transform:none !important;box-shadow:none !important}
 }
+
+/* Skeleton */
+.skel{display:grid;gap:.5rem}
+.skel .bar{height:1rem;border-radius:.4rem;background:linear-gradient(90deg,#eee 25%,#f5f5f5 37%,#eee 63%);
+  background-size:400% 100%;animation:shine 1.2s infinite}
+@keyframes shine{0%{background-position:100% 0}100%{background-position:0 0}}
