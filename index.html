@@ -32,13 +32,20 @@
         <p class="muted">Frontend learner &amp; weather app tinkerer</p>
         <button id="toggleTheme" class="icon-btn" type="button" aria-pressed="false" aria-label="Switch to dark theme" title="Switch to dark theme">🌙</button>
       </div>
-      <nav class="nav-links" aria-label="Main navigation">
-        <a href="#about">About</a>
-        <a href="#skills">Skills</a>
-        <a href="#hobby">Hobby</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-      </nav>
+      <div class="nav-area">
+        <button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="เปิดเมนูนำทาง">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav id="siteNav" class="nav-menu" aria-label="Main navigation" aria-hidden="true">
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#hobby">Hobby</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
     </div>
   </header>
 
@@ -162,6 +169,75 @@
       });
 
       applyTheme(currentTheme());
+    })();
+
+    (function(){
+      var toggle = document.getElementById('menuToggle');
+      var nav = document.getElementById('siteNav');
+      if(!toggle || !nav) return;
+      var navArea = toggle.parentElement;
+      var mq = window.matchMedia('(min-width: 768px)');
+      var labels = { open:'เปิดเมนูนำทาง', close:'ปิดเมนูนำทาง' };
+
+      function setOpen(open){
+        if(open){
+          navArea.classList.add('open');
+        }else{
+          navArea.classList.remove('open');
+        }
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        var label = open ? labels.close : labels.open;
+        toggle.setAttribute('aria-label', label);
+        toggle.title = label;
+        if(mq.matches){
+          nav.setAttribute('aria-hidden','false');
+        }else{
+          nav.setAttribute('aria-hidden', open ? 'false' : 'true');
+        }
+      }
+
+      function syncViewport(){
+        if(mq.matches){
+          navArea.classList.remove('open');
+          nav.setAttribute('aria-hidden','false');
+          toggle.setAttribute('aria-expanded','false');
+          toggle.setAttribute('aria-label', labels.open);
+          toggle.title = labels.open;
+        }else{
+          setOpen(navArea.classList.contains('open'));
+        }
+      }
+
+      toggle.addEventListener('click', function(){
+        var willOpen = !navArea.classList.contains('open');
+        setOpen(willOpen);
+      });
+
+      nav.addEventListener('click', function(event){
+        if(event.target.closest('a')){
+          setOpen(false);
+        }
+      });
+
+      document.addEventListener('click', function(event){
+        if(mq.matches) return;
+        if(navArea.contains(event.target)) return;
+        setOpen(false);
+      });
+
+      document.addEventListener('keydown', function(event){
+        if(event.key === 'Escape'){
+          setOpen(false);
+        }
+      });
+
+      if(typeof mq.addEventListener === 'function'){
+        mq.addEventListener('change', syncViewport);
+      }else if(typeof mq.addListener === 'function'){
+        mq.addListener(syncViewport);
+      }
+
+      syncViewport();
     })();
   </script>
 </body>
