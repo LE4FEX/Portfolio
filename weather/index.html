@@ -10,7 +10,23 @@
 </head>
 <body>
   <main class="wrap">
-    <h1>Weather</h1>
+    <div class="bar">
+      <div class="title">
+        <h1 id="appTitle">Weather</h1>
+        <p id="appTagline" class="muted">Realtime from OpenWeather API</p>
+      </div>
+      <div class="actions">
+        <a id="backHome" class="icon-btn" href="../index.html" aria-label="กลับหน้าหลัก">← <span>กลับหน้าหลัก</span></a>
+        <label class="lang-switch">
+          <span id="langLabel">Language</span>
+          <select id="langSelect" aria-label="Language">
+            <option value="th">ไทย</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <button id="themeToggle" class="icon-btn" type="button" aria-label="สลับธีม" title="สลับธีม">🌙</button>
+      </div>
+    </div>
 
     <form id="searchForm" autocomplete="off">
       <input id="q" placeholder="พิมพ์ชื่อเมือง เช่น Bangkok" required />
@@ -19,10 +35,12 @@
         <option value="imperial">°F</option>
       </select>
       <button id="geoBtn" type="button" title="ใช้ตำแหน่งปัจจุบัน">ใช้ตำแหน่งฉัน</button>
-      <button id="themeToggle" type="button" aria-label="สลับธีม" title="สลับธีม">🌙</button>
-      <button id="tabNow" type="button" class="tab on">วันนี้</button>
-      <button id="tab5d"  type="button" class="tab">5 วัน</button>
     </form>
+
+    <div class="tabs" role="tablist" aria-label="ตัวเลือกการแสดงผล">
+      <button id="tabNow" type="button" class="tab on" role="tab" aria-selected="true">วันนี้</button>
+      <button id="tab5d" type="button" class="tab" role="tab" aria-selected="false">5 วัน</button>
+    </div>
 
     <div id="history" class="chips" aria-label="ประวัติล่าสุด"></div>
 
