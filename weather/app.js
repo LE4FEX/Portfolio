@@ -155,7 +155,7 @@ const backHomeEl = document.getElementById('backHome');
 const langSelect = document.getElementById('langSelect');
 const langLabelEl = document.getElementById('langLabel');
 const tabsWrap = document.querySelector('.tabs');
-const notifyBtn = document.getElementById('notifyBtn');
+let notifyBtn = document.getElementById('notifyBtn');
 
 const kvKey = 'weather:kv';
 const THEME_KEY = 'theme';
@@ -171,6 +171,8 @@ const NOTIFY_ICONS = {
 
 let notificationsOptIn = loadNotificationPreference();
 let lastNotificationSignature = null;
+
+ensureNotifyButton();
 
 let timer = null;
 let aborter = null;
@@ -767,24 +769,31 @@ function storeNotificationPreference(value){
   }catch(_){ }
 }
 
-function renderNotifyButton(label, iconKey){
+function ensureNotifyButton(){
+  if (notifyBtn) return notifyBtn;
+  const actions = document.querySelector('.actions');
+  if (!actions) return null;
+  const btn = document.createElement('button');
+  btn.id = 'notifyBtn';
+  btn.type = 'button';
+  btn.className = 'icon-btn notify-btn';
+  btn.setAttribute('aria-pressed', 'false');
+  btn.setAttribute('aria-label', 'Notifications');
+  btn.title = 'Notifications';
+  btn.dataset.state = 'off';
+  btn.textContent = NOTIFY_ICONS.off;
+  actions.appendChild(btn);
+  notifyBtn = btn;
+  return notifyBtn;
+}
+
+function renderNotifyButton(iconKey){
   if (!notifyBtn) return;
-  const fragment = document.createDocumentFragment();
-  if (iconKey){
-    const iconSpan = document.createElement('span');
-    iconSpan.className = 'icon';
-    iconSpan.setAttribute('aria-hidden', 'true');
-    iconSpan.textContent = NOTIFY_ICONS[iconKey] || iconKey;
-    fragment.appendChild(iconSpan);
-  }
-  const labelSpan = document.createElement('span');
-  labelSpan.className = 'label';
-  labelSpan.textContent = label;
-  fragment.appendChild(labelSpan);
-  notifyBtn.replaceChildren(fragment);
+  notifyBtn.textContent = NOTIFY_ICONS[iconKey] || NOTIFY_ICONS.off;
 }
 
 function updateNotificationButton(){
+  notifyBtn = ensureNotifyButton();
   if (!notifyBtn) return;
   notifyBtn.classList.add('icon-btn', 'notify-btn');
   if (!notificationsSupported){
@@ -792,8 +801,9 @@ function updateNotificationButton(){
     notifyBtn.disabled = true;
     notifyBtn.dataset.state = 'unsupported';
     notifyBtn.title = label;
+    notifyBtn.setAttribute('aria-label', label);
     notifyBtn.setAttribute('aria-pressed', 'false');
-    renderNotifyButton(label, 'unsupported');
+    renderNotifyButton('unsupported');
     return;
   }
   const perm = Notification.permission;
@@ -802,16 +812,18 @@ function updateNotificationButton(){
     notifyBtn.disabled = true;
     notifyBtn.dataset.state = 'blocked';
     notifyBtn.title = label;
+    notifyBtn.setAttribute('aria-label', label);
     notifyBtn.setAttribute('aria-pressed', 'false');
-    renderNotifyButton(label, 'blocked');
+    renderNotifyButton('blocked');
     return;
   }
   notifyBtn.disabled = false;
   notifyBtn.dataset.state = notificationsOptIn ? 'on' : 'off';
-  notifyBtn.title = text('notify.toggleTitle');
-  notifyBtn.setAttribute('aria-pressed', notificationsOptIn ? 'true' : 'false');
   const label = text(notificationsOptIn ? 'notify.disable' : 'notify.enable');
-  renderNotifyButton(label, notificationsOptIn ? 'on' : 'off');
+  notifyBtn.setAttribute('aria-label', label);
+  notifyBtn.title = label;
+  notifyBtn.setAttribute('aria-pressed', notificationsOptIn ? 'true' : 'false');
+  renderNotifyButton(notificationsOptIn ? 'on' : 'off');
 }
 
 function showPermissionEnabledNotification(){
@@ -895,7 +907,7 @@ async function handleNotifyClick(){
     updateNotificationButton();
   }
 }
-
+notifyBtn = ensureNotifyButton();
 notifyBtn?.addEventListener('click', handleNotifyClick);
 window.addEventListener('focus', updateNotificationButton);
 updateNotificationButton();
