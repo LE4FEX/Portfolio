@@ -144,6 +144,34 @@ body{
 }
 #geoBtn:active{transform:translateY(-1px)}
 
+#notifyBtn{
+  flex:0 0 auto;
+  padding:.6rem .75rem;
+  border:1px solid var(--bd);
+  border-radius:.5rem;
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transform:translateY(0);
+  transition:background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .3s ease,transform .3s ease;
+}
+#notifyBtn:hover,
+#notifyBtn:focus-visible{
+  background:linear-gradient(135deg, var(--accent), #64c4ff);
+  border-color:rgba(255,255,255,.4);
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-hover);
+  outline:none;
+}
+#notifyBtn:active{transform:translateY(-1px)}
+#notifyBtn[disabled]{
+  cursor:not-allowed;
+  opacity:.65;
+  transform:none;
+  box-shadow:var(--shadow);
+}
+
 .tabs{display:flex;gap:.5rem;margin:0 0 1rem;flex-wrap:wrap}
 .tab{
   border:1px solid var(--bd);

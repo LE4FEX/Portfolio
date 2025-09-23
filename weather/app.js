@@ -26,7 +26,12 @@ const I18N = {
       offlineCheckConnection: 'You are offline. Check your connection.',
       offlineForecastFromCache: 'Offline: showing cached forecast',
       offlineForecastNoData: 'Offline. Check your connection.',
-      storageCleared: 'History cleared'
+      storageCleared: 'History cleared',
+      notifyEnabled: 'Weather notifications enabled',
+      notifyDisabled: 'Weather notifications disabled',
+      notifyDenied: 'Permission for notifications was not granted',
+      notifyBlocked: 'Notifications are blocked in your browser settings',
+      notifyUnsupported: 'Notifications are not supported in this browser'
     },
     cards: {
       feelsLike: 'Feels like {value}{unit} • {description}',
@@ -50,6 +55,18 @@ const I18N = {
     theme: {
       toggleToDark: 'Switch to dark theme',
       toggleToLight: 'Switch to light theme'
+    },
+    notify: {
+      enable: 'Enable notifications',
+      disable: 'Disable notifications',
+      toggleTitle: 'Toggle weather notifications',
+      unsupported: 'Notifications are not supported in this browser',
+      blocked: 'Notifications are blocked. Change your browser settings to enable them.',
+      permissionTitle: 'Notifications enabled',
+      permissionBody: 'You will receive updates when the weather changes.',
+      weatherTitle: 'Weather in {city}',
+      weatherBody: '{temp}{unit} • {description}',
+      unknownCity: 'your area'
     }
   },
   th: {
@@ -76,7 +93,12 @@ const I18N = {
       offlineCheckConnection: 'ออฟไลน์อยู่ ตรวจการเชื่อมต่อ',
       offlineForecastFromCache: 'ออฟไลน์: แสดงพยากรณ์จากแคช',
       offlineForecastNoData: 'ออฟไลน์อยู่ ตรวจการเชื่อมต่อ',
-      storageCleared: 'ล้างประวัติแล้ว'
+      storageCleared: 'ล้างประวัติแล้ว',
+      notifyEnabled: 'เปิดการแจ้งเตือนแล้ว',
+      notifyDisabled: 'ปิดการแจ้งเตือนแล้ว',
+      notifyDenied: 'ไม่ได้รับสิทธิแจ้งเตือน',
+      notifyBlocked: 'การแจ้งเตือนถูกบล็อกในเบราว์เซอร์',
+      notifyUnsupported: 'เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน'
     },
     cards: {
       feelsLike: 'รู้สึกเหมือน {value}{unit} • {description}',
@@ -100,6 +122,18 @@ const I18N = {
     theme: {
       toggleToDark: 'สลับเป็นโหมดมืด',
       toggleToLight: 'สลับเป็นโหมดสว่าง'
+    },
+    notify: {
+      enable: 'เปิดแจ้งเตือน',
+      disable: 'ปิดแจ้งเตือน',
+      toggleTitle: 'สลับการแจ้งเตือนสภาพอากาศ',
+      unsupported: 'เบราว์เซอร์ไม่รองรับการแจ้งเตือน',
+      blocked: 'การแจ้งเตือนถูกบล็อก กรุณาเปิดในตั้งค่าเบราว์เซอร์',
+      permissionTitle: 'เปิดแจ้งเตือนแล้ว',
+      permissionBody: 'คุณจะได้รับการแจ้งเตือนเมื่อข้อมูลอากาศอัปเดต',
+      weatherTitle: 'สภาพอากาศ {city}',
+      weatherBody: '{temp}{unit} • {description}',
+      unknownCity: 'พื้นที่ของคุณ'
     }
   }
 };
@@ -121,10 +155,16 @@ const backHomeEl = document.getElementById('backHome');
 const langSelect = document.getElementById('langSelect');
 const langLabelEl = document.getElementById('langLabel');
 const tabsWrap = document.querySelector('.tabs');
+const notifyBtn = document.getElementById('notifyBtn');
 
 const kvKey = 'weather:kv';
 const THEME_KEY = 'theme';
 const LANG_KEY = 'weather:lang';
+const NOTIFY_PREF_KEY = 'weather:notify';
+const notificationsSupported = typeof window !== 'undefined' && 'Notification' in window;
+
+let notificationsOptIn = loadNotificationPreference();
+let lastNotificationSignature = null;
 
 let timer = null;
 let aborter = null;
@@ -203,6 +243,10 @@ window.addEventListener('storage', (event)=>{
       lang = next;
       applyLanguage(true);
     }
+  }
+  if (event.key === NOTIFY_PREF_KEY){
+    notificationsOptIn = event.newValue === 'true';
+    updateNotificationButton();
   }
 });
 
@@ -389,6 +433,7 @@ function render(data, units){
   card.innerHTML = composeCurrentMarkup(data, units);
   card.classList.remove('hidden');
   forecastEl.classList.add('hidden');
+  maybeNotifyWeather(data, units);
 }
 
 function renderForecast(data, units){
@@ -562,6 +607,7 @@ function applyLanguage(initial){
     geoBtn.textContent = text('geoBtn');
     geoBtn.title = text('geoBtnTitle');
   }
+  updateNotificationButton();
   if (tabNow) tabNow.textContent = text('tabs.now');
   if (tab5d) tab5d.textContent = text('tabs.forecast');
   updateThemeToggleAppearance(theme === 'dark');
@@ -696,3 +742,130 @@ function safeParse(json){
   try{ return JSON.parse(json); }
   catch(_){ return null; }
 }
+
+function loadNotificationPreference(){
+  if (!notificationsSupported) return false;
+  try{
+    const stored = localStorage.getItem(NOTIFY_PREF_KEY);
+    if (Notification.permission !== 'granted') return false;
+    return stored === 'true';
+  }catch(_){
+    return false;
+  }
+}
+
+function storeNotificationPreference(value){
+  notificationsOptIn = value;
+  try{
+    localStorage.setItem(NOTIFY_PREF_KEY, value ? 'true' : 'false');
+  }catch(_){ }
+}
+
+function updateNotificationButton(){
+  if (!notifyBtn) return;
+  if (!notificationsSupported){
+    notifyBtn.disabled = true;
+    notifyBtn.textContent = text('notify.unsupported');
+    notifyBtn.title = text('notify.unsupported');
+    notifyBtn.setAttribute('aria-pressed', 'false');
+    return;
+  }
+  const perm = Notification.permission;
+  if (perm === 'denied'){
+    notifyBtn.disabled = true;
+    notifyBtn.textContent = text('notify.blocked');
+    notifyBtn.title = text('notify.blocked');
+    notifyBtn.setAttribute('aria-pressed', 'false');
+    return;
+  }
+  notifyBtn.disabled = false;
+  notifyBtn.textContent = text(notificationsOptIn ? 'notify.disable' : 'notify.enable');
+  notifyBtn.title = text('notify.toggleTitle');
+  notifyBtn.setAttribute('aria-pressed', notificationsOptIn ? 'true' : 'false');
+}
+
+function showPermissionEnabledNotification(){
+  if (!notificationsSupported || Notification.permission !== 'granted') return;
+  try{
+    new Notification(text('notify.permissionTitle'), {
+      body: text('notify.permissionBody'),
+      icon: './icons/icon-192.png'
+    });
+  }catch(_){ }
+}
+
+function getNotificationSignature(data, units){
+  if (!data) return '';
+  const name = data.name || '';
+  const temp = round(data.main?.temp);
+  const desc = data.weather?.[0]?.description || '';
+  return `${name}|${temp}|${units}|${desc}`;
+}
+
+function showWeatherNotification(data, units){
+  if (!data) return;
+  const city = data.name || text('notify.unknownCity');
+  const unitLabel = units === 'imperial' ? '°F' : '°C';
+  const descRaw = data.weather?.[0]?.description || '';
+  const description = descRaw ? capitalize(descRaw) : '-';
+  const icon = data.weather?.[0]?.icon ? `https://openweathermap.org/img/wn/${data.weather[0].icon}.png` : './icons/icon-192.png';
+  const title = text('notify.weatherTitle', { city });
+  const body = text('notify.weatherBody', { temp: round(data.main?.temp), unit: unitLabel, description });
+  try{
+    new Notification(title, { body, icon });
+  }catch(err){
+    console.error('notification-error', err);
+  }
+}
+
+function maybeNotifyWeather(data, units, force = false){
+  if (!notificationsSupported) return;
+  if (Notification.permission !== 'granted') return;
+  if (!notificationsOptIn && !force) return;
+  if (!data) return;
+  const signature = getNotificationSignature(data, units);
+  if (!force && signature && signature === lastNotificationSignature) return;
+  lastNotificationSignature = signature;
+  showWeatherNotification(data, units);
+}
+
+async function handleNotifyClick(){
+  if (!notificationsSupported){
+    setMsg('messages.notifyUnsupported');
+    updateNotificationButton();
+    return;
+  }
+  const perm = Notification.permission;
+  if (perm === 'denied'){
+    setMsg('messages.notifyBlocked');
+    updateNotificationButton();
+    return;
+  }
+  if (perm === 'granted'){
+    storeNotificationPreference(!notificationsOptIn);
+    updateNotificationButton();
+    if (notificationsOptIn){
+      setMsg('messages.notifyEnabled');
+      if (lastCurrent?.data) maybeNotifyWeather(lastCurrent.data, lastCurrent.units, true);
+    } else {
+      setMsg('messages.notifyDisabled');
+    }
+    return;
+  }
+  const result = await Notification.requestPermission();
+  if (result === 'granted'){
+    storeNotificationPreference(true);
+    setMsg('messages.notifyEnabled');
+    updateNotificationButton();
+    showPermissionEnabledNotification();
+    if (lastCurrent?.data) maybeNotifyWeather(lastCurrent.data, lastCurrent.units, true);
+  } else {
+    setMsg(result === 'denied' ? 'messages.notifyDenied' : 'messages.notifyUnsupported');
+    storeNotificationPreference(false);
+    updateNotificationButton();
+  }
+}
+
+notifyBtn?.addEventListener('click', handleNotifyClick);
+window.addEventListener('focus', updateNotificationButton);
+updateNotificationButton();
