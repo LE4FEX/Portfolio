@@ -45,11 +45,15 @@ body{
 .bar{display:flex;align-items:center;justify-content:space-between;margin:0 0 .75rem}
 h1{margin:0;font-weight:600}
 .icon-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
   border:1px solid var(--bd);
   border-radius:.6rem;
   padding:.45rem .6rem;
   background:var(--panel);
   color:var(--fg);
+  text-decoration:none;
   cursor:pointer;
   box-shadow:var(--shadow);
   transform:translateY(0);
