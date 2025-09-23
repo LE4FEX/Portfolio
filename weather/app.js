@@ -162,6 +162,12 @@ const THEME_KEY = 'theme';
 const LANG_KEY = 'weather:lang';
 const NOTIFY_PREF_KEY = 'weather:notify';
 const notificationsSupported = typeof window !== 'undefined' && 'Notification' in window;
+const NOTIFY_ICONS = {
+  on: '🔔',
+  off: '🔕',
+  blocked: '🚫',
+  unsupported: '🚫'
+};
 
 let notificationsOptIn = loadNotificationPreference();
 let lastNotificationSignature = null;
@@ -761,27 +767,51 @@ function storeNotificationPreference(value){
   }catch(_){ }
 }
 
+function renderNotifyButton(label, iconKey){
+  if (!notifyBtn) return;
+  const fragment = document.createDocumentFragment();
+  if (iconKey){
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'icon';
+    iconSpan.setAttribute('aria-hidden', 'true');
+    iconSpan.textContent = NOTIFY_ICONS[iconKey] || iconKey;
+    fragment.appendChild(iconSpan);
+  }
+  const labelSpan = document.createElement('span');
+  labelSpan.className = 'label';
+  labelSpan.textContent = label;
+  fragment.appendChild(labelSpan);
+  notifyBtn.replaceChildren(fragment);
+}
+
 function updateNotificationButton(){
   if (!notifyBtn) return;
+  notifyBtn.classList.add('icon-btn', 'notify-btn');
   if (!notificationsSupported){
+    const label = text('notify.unsupported');
     notifyBtn.disabled = true;
-    notifyBtn.textContent = text('notify.unsupported');
-    notifyBtn.title = text('notify.unsupported');
+    notifyBtn.dataset.state = 'unsupported';
+    notifyBtn.title = label;
     notifyBtn.setAttribute('aria-pressed', 'false');
+    renderNotifyButton(label, 'unsupported');
     return;
   }
   const perm = Notification.permission;
   if (perm === 'denied'){
+    const label = text('notify.blocked');
     notifyBtn.disabled = true;
-    notifyBtn.textContent = text('notify.blocked');
-    notifyBtn.title = text('notify.blocked');
+    notifyBtn.dataset.state = 'blocked';
+    notifyBtn.title = label;
     notifyBtn.setAttribute('aria-pressed', 'false');
+    renderNotifyButton(label, 'blocked');
     return;
   }
   notifyBtn.disabled = false;
-  notifyBtn.textContent = text(notificationsOptIn ? 'notify.disable' : 'notify.enable');
+  notifyBtn.dataset.state = notificationsOptIn ? 'on' : 'off';
   notifyBtn.title = text('notify.toggleTitle');
   notifyBtn.setAttribute('aria-pressed', notificationsOptIn ? 'true' : 'false');
+  const label = text(notificationsOptIn ? 'notify.disable' : 'notify.enable');
+  renderNotifyButton(label, notificationsOptIn ? 'on' : 'off');
 }
 
 function showPermissionEnabledNotification(){
