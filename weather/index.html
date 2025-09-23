@@ -3,17 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#0d6efd">
   <title>Weather App</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="theme-color" content="#0d6efd">
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="wrap">
-    <div class="bar">
-      <h1>Weather</h1>
-      <a class="icon-btn back-link" href="../index.html" aria-label="กลับหน้าหลัก">← กลับหน้าหลัก</a>
-    </div>
+    <h1>Weather</h1>
 
     <form id="searchForm" autocomplete="off">
       <input id="q" placeholder="พิมพ์ชื่อเมือง เช่น Bangkok" required />
@@ -22,14 +19,15 @@
         <option value="imperial">°F</option>
       </select>
       <button id="geoBtn" type="button" title="ใช้ตำแหน่งปัจจุบัน">ใช้ตำแหน่งฉัน</button>
-
-      <!-- buttontheme -->
-       <button id="themeToggle" type="button" aria-label="สลับธีม" title="สลับธีม">🌙</button>
+      <button id="themeToggle" type="button" aria-label="สลับธีม" title="สลับธีม">🌙</button>
+      <button id="tabNow" type="button" class="tab on">วันนี้</button>
+      <button id="tab5d"  type="button" class="tab">5 วัน</button>
     </form>
 
     <div id="history" class="chips" aria-label="ประวัติล่าสุด"></div>
 
     <div id="card" class="card hidden" aria-live="polite"></div>
+    <div id="forecast" class="forecast hidden" aria-live="polite"></div>
     <p id="msg" class="muted" aria-live="polite"></p>
   </main>
 
