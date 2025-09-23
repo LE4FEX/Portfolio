@@ -65,6 +65,7 @@ h1{margin:0;font-weight:600}
 }
 
 #searchForm{display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap}
+#themeToggle{padding: .6rem .75rem;border:1px solid var(--bd);border-radius:.5rem;background:#fff;cursor: pointer}
 #searchForm input,#searchForm select{
   padding:.6rem .75rem;
   border:1px solid var(--bd);
