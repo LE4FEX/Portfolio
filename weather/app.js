@@ -1,5 +1,6 @@
 // Weather app frontend logic: fetch via Netlify function, handle theming, history, and i18n.
-const API = { base: "/.netlify/functions/weather" };
+//const API = { base: "/.netlify/functions/weather" };
+const API = { base: "2192b0dc1585a56243ae7c7328937bb5" }
 
 const I18N = {
   en: {
