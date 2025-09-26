@@ -1,60 +1,109 @@
 <!doctype html>
 <html lang="th">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Weather App</title>
-  <meta name="theme-color" content="#0d6efd">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <main class="wrap">
-    <div class="bar">
-      <div class="title">
-        <h1 id="appTitle">Weather</h1>
-        <p id="appTagline" class="muted">Realtime from OpenWeather API</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Weather App</title>
+    <meta name="theme-color" content="#0d6efd" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="bar">
+        <div class="title">
+          <h1 id="appTitle">Weather</h1>
+          <p id="appTagline" class="muted">Realtime from OpenWeather API</p>
+        </div>
+        <div class="actions">
+          <a
+            id="backHome"
+            class="icon-btn"
+            href="../index.html"
+            aria-label="กลับหน้าหลัก"
+            >← <span>กลับหน้าหลัก</span></a
+          >
+          <label class="lang-switch">
+            <span id="langLabel">Language</span>
+            <select id="langSelect" aria-label="Language">
+              <option value="th">ไทย</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+          <button
+            id="themeToggle"
+            class="icon-btn"
+            type="button"
+            aria-label="สลับธีม"
+            title="สลับธีม"
+          >
+            🌙
+          </button>
+          <button
+            id="notifyBtn"
+            class="icon-btn notify-btn"
+            type="button"
+            aria-label="เปิดการแจ้งเตือน"
+            title="เปิดการแจ้งเตือน"
+          >
+            🔕
+          </button>
+        </div>
       </div>
-      <div class="actions">
-        <a id="backHome" class="icon-btn" href="../index.html" aria-label="กลับหน้าหลัก">← <span>กลับหน้าหลัก</span></a>
-        <label class="lang-switch">
-          <span id="langLabel">Language</span>
-          <select id="langSelect" aria-label="Language">
-            <option value="th">ไทย</option>
-            <option value="en">English</option>
-          </select>
-        </label>
-        <button id="themeToggle" class="icon-btn" type="button" aria-label="สลับธีม" title="สลับธีม">🌙</button>
-        <button id="notifyBtn" class="icon-btn notify-btn" type="button" aria-label="เปิดการแจ้งเตือน" title="เปิดการแจ้งเตือน">🔕</button>
+
+      <form id="searchForm" autocomplete="off">
+        <input id="q" placeholder="พิมพ์ชื่อเมือง เช่น Bangkok" required />
+        <select id="unit">
+          <option value="metric">°C</option>
+          <option value="imperial">°F</option>
+        </select>
+        <button
+          id="geoBtn"
+          class="accent-btn"
+          type="button"
+          title="ใช้ตำแหน่งปัจจุบัน"
+        >
+          ใช้ตำแหน่งฉัน
+        </button>
+      </form>
+
+      <div class="tabs" role="tablist" aria-label="ตัวเลือกการแสดงผล">
+        <button
+          id="tabNow"
+          type="button"
+          class="tab on"
+          role="tab"
+          aria-selected="true"
+        >
+          วันนี้
+        </button>
+        <button
+          id="tab5d"
+          type="button"
+          class="tab"
+          role="tab"
+          aria-selected="false"
+        >
+          5 วัน
+        </button>
+        <button id="tabHourly" type="button" class="tab" role="tab">
+          รายชั่วโมง
+        </button>
+        <div id="hourly" class="hourly hidden" aria-live="polite"></div>
       </div>
-    </div>
 
-    <form id="searchForm" autocomplete="off">
-      <input id="q" placeholder="พิมพ์ชื่อเมือง เช่น Bangkok" required />
-      <select id="unit">
-        <option value="metric">°C</option>
-        <option value="imperial">°F</option>
-      </select>
-      <button id="geoBtn" class="accent-btn" type="button" title="ใช้ตำแหน่งปัจจุบัน">ใช้ตำแหน่งฉัน</button>
-    </form>
+      <div id="history" class="chips" aria-label="ประวัติล่าสุด"></div>
 
-    <div class="tabs" role="tablist" aria-label="ตัวเลือกการแสดงผล">
-      <button id="tabNow" type="button" class="tab on" role="tab" aria-selected="true">วันนี้</button>
-      <button id="tab5d" type="button" class="tab" role="tab" aria-selected="false">5 วัน</button>
-    </div>
+      <div id="card" class="card hidden" aria-live="polite"></div>
+      <div id="forecast" class="forecast hidden" aria-live="polite"></div>
+      <p id="msg" class="muted" aria-live="polite"></p>
+    </main>
 
-    <div id="history" class="chips" aria-label="ประวัติล่าสุด"></div>
-
-    <div id="card" class="card hidden" aria-live="polite"></div>
-    <div id="forecast" class="forecast hidden" aria-live="polite"></div>
-    <p id="msg" class="muted" aria-live="polite"></p>
-  </main>
-
-  <script src="app.js" defer></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
-  </script>
-</body>
+    <script src="app.js" defer></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js");
+      }
+    </script>
+  </body>
 </html>
