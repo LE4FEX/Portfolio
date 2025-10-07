@@ -1,6 +1,6 @@
-// PWA service worker (cache-first static, SWR for Netlify Function)
-const STATIC_CACHE = 'static-v2';
-const DATA_CACHE   = 'data-v2';
+// PWA service worker (cache-first static, SWR for OpenWeather API)
+const STATIC_CACHE = 'static-v3';
+const DATA_CACHE   = 'data-v3';
 
 const STATIC_ASSETS = [
   './',
@@ -27,15 +27,18 @@ self.addEventListener('fetch',(e)=>{
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   const same = url.origin === location.origin;
-  const isFn = url.pathname.startsWith('/.netlify/functions/weather');
+  const isWeatherApi = url.origin === 'https://api.openweathermap.org';
 
   // static -> cache-first
-  if (same && !isFn){
+  if (same){
     e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request)));
     return;
   }
-  // function -> stale-while-revalidate
-  if (same && isFn) e.respondWith(swr(e.request));
+  // weather api -> stale-while-revalidate
+  if (isWeatherApi){
+    e.respondWith(swr(e.request));
+    return;
+  }
 });
 
 async function swr(req){

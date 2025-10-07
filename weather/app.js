@@ -1,6 +1,12 @@
-// Weather app frontend logic: fetch via Netlify function, handle theming, history, and i18n.
-//const API = { base: "/.netlify/functions/weather" };
-const API = { base: "2192b0dc1585a56243ae7c7328937bb5" }
+// Weather app frontend logic: fetch OpenWeather API directly, handle theming, history, and i18n.
+const API = {
+  key: "2192b0dc1585a56243ae7c7328937bb5",
+  endpoints: {
+    current: "https://api.openweathermap.org/data/2.5/weather",
+    forecast: "https://api.openweathermap.org/data/2.5/forecast",
+    hourly: "https://api.openweathermap.org/data/3.0/onecall",
+  },
+};
 
 const I18N = {
   en: {
@@ -187,6 +193,19 @@ let lang = getPreferredLang();
 let lastCurrent = null;
 let lastForecast = null;
 
+function buildWeatherUrl(type, params = {}) {
+  const base = API.endpoints[type];
+  if (!base) throw new Error(`Unknown API type: ${type}`);
+  const url = new URL(base);
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === "") continue;
+    url.searchParams.set(key, value);
+  }
+  url.searchParams.set("appid", API.key);
+  url.searchParams.set("lang", lang === "th" ? "th" : "en");
+  return url.toString();
+}
+
 const history = JSON.parse(localStorage.getItem("weather:history") || "[]");
 const saved = JSON.parse(localStorage.getItem("weather:last") || "null");
 
@@ -276,24 +295,38 @@ window.addEventListener("storage", (event) => {
 
 function fetchWeatherByCity(city, units = "metric") {
   if (currentTab === "5d") return fetchForecastByCity(city, units);
-  const url = `${API.base}?q=${encodeURIComponent(city)}&units=${units}`;
+  const url = buildWeatherUrl("current", {
+    q: city,
+    units,
+  });
   return fetchAndRender(url, units, city);
 }
 
 async function fetchWeatherByCoords(lat, lon, units = "metric") {
   if (currentTab === "5d") return fetchForecastByCoords(lat, lon, units);
   if (currentTab === "hourly") return fetchHourly(lat, lon, units);
-  const url = `${API.base}?lat=${lat}&lon=${lon}&units=${units}`;
+  const url = buildWeatherUrl("current", {
+    lat,
+    lon,
+    units,
+  });
   return fetchAndRender(url, units);
 }
 
 function fetchForecastByCity(city, units = "metric") {
-  const url = `${API.base}?t=forecast&q=${encodeURIComponent(city)}&units=${units}`;
+  const url = buildWeatherUrl("forecast", {
+    q: city,
+    units,
+  });
   return fetchAndRenderForecast(url, units, city);
 }
 
 function fetchForecastByCoords(lat, lon, units = "metric") {
-  const url = `${API.base}?t=forecast&lat=${lat}&lon=${lon}&units=${units}`;
+  const url = buildWeatherUrl("forecast", {
+    lat,
+    lon,
+    units,
+  });
   return fetchAndRenderForecast(url, units);
 }
 
@@ -1050,7 +1083,12 @@ window.addEventListener("focus", updateNotificationButton);
 updateNotificationButton();
 
 async function fetchHourly(lat, lon, units = "metric") {
-  const url = `${API.base}?t=hourly&lat=${lat}&lon=${lon}&units=${units}`;
+  const url = buildWeatherUrl("hourly", {
+    lat,
+    lon,
+    units,
+    exclude: "minutely,daily,alerts,current",
+  });
   return fetchAndRenderHourly(url, units);
 }
 
