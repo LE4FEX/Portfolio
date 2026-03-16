@@ -6,51 +6,58 @@
     <title>Weather App</title>
     <meta name="theme-color" content="#0d6efd" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="../styles.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="wrap">
-      <div class="bar">
-        <div class="title">
+    <header>
+      <div class="wrap surface header-bar">
+        <div class="brand">
           <h1 id="appTitle">Weather</h1>
           <p id="appTagline" class="muted">Realtime from OpenWeather API</p>
+          <div class="header-controls">
+            <label class="lang-switch">
+              <span id="langLabel">Language</span>
+              <select id="langSelect" aria-label="Language">
+                <option value="th">ไทย</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <button
+              id="themeToggle"
+              class="icon-btn"
+              type="button"
+              aria-label="สลับธีม"
+              title="สลับธีม"
+            >
+              🌙
+            </button>
+            <button
+              id="notifyBtn"
+              class="icon-btn notify-btn"
+              type="button"
+              aria-label="เปิดการแจ้งเตือน"
+              title="เปิดการแจ้งเตือน"
+            >
+              🔕
+            </button>
+          </div>
         </div>
-        <div class="actions">
-          <a
-            id="backHome"
-            class="icon-btn"
-            href="../index.html"
-            aria-label="กลับหน้าหลัก"
-            >← <span>กลับหน้าหลัก</span></a
-          >
-          <label class="lang-switch">
-            <span id="langLabel">Language</span>
-            <select id="langSelect" aria-label="Language">
-              <option value="th">ไทย</option>
-              <option value="en">English</option>
-            </select>
-          </label>
-          <button
-            id="themeToggle"
-            class="icon-btn"
-            type="button"
-            aria-label="สลับธีม"
-            title="สลับธีม"
-          >
-            🌙
+        <div class="nav-area">
+          <button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="เปิดเมนูนำทาง">
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
-          <button
-            id="notifyBtn"
-            class="icon-btn notify-btn"
-            type="button"
-            aria-label="เปิดการแจ้งเตือน"
-            title="เปิดการแจ้งเตือน"
-          >
-            🔕
-          </button>
+          <nav id="siteNav" class="nav-menu" aria-label="Main navigation" aria-hidden="true">
+            <a id="backHome" href="../">Home</a>
+            <a href="../todo/">Todo</a>
+            <a href="./">Weather</a>
+          </nav>
         </div>
       </div>
-
+    </header>
+    <main class="wrap content">
       <form id="searchForm" autocomplete="off">
         <input id="q" placeholder="พิมพ์ชื่อเมือง เช่น Bangkok" required />
         <select id="unit">
@@ -104,6 +111,76 @@
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("./sw.js");
       }
+    </script>
+    <script>
+      (function(){
+        var toggle = document.getElementById('menuToggle');
+        var nav = document.getElementById('siteNav');
+        if(!toggle || !nav) return;
+        var navArea = toggle.parentElement;
+        var mq = window.matchMedia('(min-width: 768px)');
+        var labels = { open:'เปิดเมนูนำทาง', close:'ปิดเมนูนำทาง' };
+
+        function setOpen(open){
+          if(open){
+            navArea.classList.add('open');
+          }else{
+            navArea.classList.remove('open');
+          }
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          var label = open ? labels.close : labels.open;
+          toggle.setAttribute('aria-label', label);
+          toggle.title = label;
+          if(mq.matches){
+            nav.setAttribute('aria-hidden','false');
+          }else{
+            nav.setAttribute('aria-hidden', open ? 'false' : 'true');
+          }
+        }
+
+        function syncViewport(){
+          if(mq.matches){
+            navArea.classList.remove('open');
+            nav.setAttribute('aria-hidden','false');
+            toggle.setAttribute('aria-expanded','false');
+            toggle.setAttribute('aria-label', labels.open);
+            toggle.title = labels.open;
+          }else{
+            setOpen(navArea.classList.contains('open'));
+          }
+        }
+
+        toggle.addEventListener('click', function(){
+          var willOpen = !navArea.classList.contains('open');
+          setOpen(willOpen);
+        });
+
+        nav.addEventListener('click', function(event){
+          if(event.target.closest('a')){
+            setOpen(false);
+          }
+        });
+
+        document.addEventListener('click', function(event){
+          if(mq.matches) return;
+          if(navArea.contains(event.target)) return;
+          setOpen(false);
+        });
+
+        document.addEventListener('keydown', function(event){
+          if(event.key === 'Escape'){
+            setOpen(false);
+          }
+        });
+
+        if(typeof mq.addEventListener === 'function'){
+          mq.addEventListener('change', syncViewport);
+        }else if(typeof mq.addListener === 'function'){
+          mq.addListener(syncViewport);
+        }
+
+        syncViewport();
+      })();
     </script>
   </body>
 </html>

@@ -200,6 +200,10 @@ let theme = getPreferredTheme();
 let lang = getPreferredLang();
 let lastCurrent = null;
 let lastForecast = null;
+let lastCoords = null;
+let lastHourly = null;
+let lastCity = null;
+let lastUnit = "metric";
 
 function buildWeatherUrl(type, params = {}) {
   if (API.isProduction()) {
@@ -315,7 +319,15 @@ window.addEventListener("storage", (event) => {
 });
 
 function fetchWeatherByCity(city, units = "metric") {
+  lastCity = city;
+  lastUnit = units;
+
   if (currentTab === "5d") return fetchForecastByCity(city, units);
+  if (currentTab === "hourly") {
+    fetchWeatherByCoords(lastCoords?.lat, lastCoords?.lon, units);
+    return;
+  }
+
   const url = buildWeatherUrl("current", {
     q: city,
     units,
@@ -324,6 +336,9 @@ function fetchWeatherByCity(city, units = "metric") {
 }
 
 async function fetchWeatherByCoords(lat, lon, units = "metric") {
+  lastCoords = { lat, lon };
+  lastUnit = units;
+
   if (currentTab === "5d") return fetchForecastByCoords(lat, lon, units);
   if (currentTab === "hourly") return fetchHourly(lat, lon, units);
   const url = buildWeatherUrl("current", {
@@ -540,7 +555,9 @@ function renderHistory() {
 
 function render(data, units) {
   lastCurrent = { data, units };
+  lastCoords = data?.coord ? { lat: data.coord.lat, lon: data.coord.lon } : null;
   lastForecast = null;
+  lastHourly = null;
   card.innerHTML = composeCurrentMarkup(data, units);
   card.classList.remove("hidden");
   forecastEl.classList.add("hidden");
@@ -675,10 +692,32 @@ function setTab(tab) {
   tab5d.classList.toggle("on", tab === "5d");
   tabHourly.classList.toggle("on", tab === "hourly");
 
+  tabNow.setAttribute("aria-selected", tab === "now");
+  tab5d.setAttribute("aria-selected", tab === "5d");
+  tabHourly.setAttribute("aria-selected", tab === "hourly");
+
   card.classList.toggle("hidden", tab !== "now");
   forecastEl.classList.toggle("hidden", tab !== "5d");
   hourlyEl.classList.toggle("hidden", tab !== "hourly");
+
+  // When switching tabs, fetch data if needed
+  if (tab === "5d") {
+    if (lastForecast) {
+      renderForecast(lastForecast.data, lastForecast.units);
+    } else if (lastCity) {
+      fetchForecastByCity(lastCity, lastUnit);
+    }
+  }
+
+  if (tab === "hourly") {
+    if (lastHourly) {
+      renderHourly(lastHourly.data, lastHourly.units);
+    } else if (lastCoords) {
+      fetchHourly(lastCoords.lat, lastCoords.lon, lastUnit);
+    }
+  }
 }
+
 tabHourly?.addEventListener("click", () => setTab("hourly"));
 
 function refreshViews() {
@@ -1120,6 +1159,7 @@ async function fetchAndRenderHourly(url, units) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP_${res.status}`);
     const data = await res.json();
+    lastHourly = { data, units };
     renderHourly(data, units);
     setTab("hourly");
   } catch (err) {
