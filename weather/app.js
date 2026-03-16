@@ -1,10 +1,18 @@
-// Weather app frontend logic: fetch OpenWeather API directly, handle theming, history, and i18n.
+// Weather app frontend logic: fetch OpenWeather API via Netlify functions or directly, handle theming, history, and i18n.
 const API = {
-  key: "2192b0dc1585a56243ae7c7328937bb5",
+  key: "2192b0dc1585a56243ae7c7328937bb5", // Fallback for development
+  base: "/api/weather",
   endpoints: {
     current: "https://api.openweathermap.org/data/2.5/weather",
     forecast: "https://api.openweathermap.org/data/2.5/forecast",
     hourly: "https://api.openweathermap.org/data/3.0/onecall",
+  },
+  // Check if Netlify functions are available
+  isProduction: () => {
+    // In production (Netlify), use functions. In development, use direct API calls
+    return !window.location.hostname.includes('localhost') &&
+           !window.location.hostname.includes('127.0.0.1') &&
+           !window.location.hostname.includes('0.0.0.0');
   },
 };
 
@@ -194,16 +202,29 @@ let lastCurrent = null;
 let lastForecast = null;
 
 function buildWeatherUrl(type, params = {}) {
-  const base = API.endpoints[type];
-  if (!base) throw new Error(`Unknown API type: ${type}`);
-  const url = new URL(base);
-  for (const [key, value] of Object.entries(params)) {
-    if (value === undefined || value === null || value === "") continue;
-    url.searchParams.set(key, value);
+  if (API.isProduction()) {
+    // Use Netlify function in production
+    const url = new URL(API.base, window.location.origin);
+    url.searchParams.set("t", type);
+    for (const [key, value] of Object.entries(params)) {
+      if (value === undefined || value === null || value === "") continue;
+      url.searchParams.set(key, value);
+    }
+    url.searchParams.set("lang", lang === "th" ? "th" : "en");
+    return url.toString();
+  } else {
+    // Use direct API calls in development
+    const base = API.endpoints[type];
+    if (!base) throw new Error(`Unknown API type: ${type}`);
+    const url = new URL(base);
+    for (const [key, value] of Object.entries(params)) {
+      if (value === undefined || value === null || value === "") continue;
+      url.searchParams.set(key, value);
+    }
+    url.searchParams.set("appid", API.key);
+    url.searchParams.set("lang", lang === "th" ? "th" : "en");
+    return url.toString();
   }
-  url.searchParams.set("appid", API.key);
-  url.searchParams.set("lang", lang === "th" ? "th" : "en");
-  return url.toString();
 }
 
 const history = JSON.parse(localStorage.getItem("weather:history") || "[]");

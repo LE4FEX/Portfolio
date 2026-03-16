@@ -29,8 +29,12 @@
     <div class="wrap surface header-bar">
       <div class="brand">
         <h1>Thanapon Choysungnuen</h1>
-        <p class="muted">Frontend learner &amp; weather app tinkerer</p>
-        <button id="toggleTheme" class="icon-btn" type="button" aria-pressed="false" aria-label="Switch to dark theme" title="Switch to dark theme">🌙</button>
+        <p class="muted">Creative Frontend Developer & Digital Innovator</p>
+        <div class="header-controls">
+          <button id="editMode" class="icon-btn" type="button" aria-label="Edit mode" title="Edit mode" style="display: none;">✏️</button>
+          <button id="toggleLanguage" class="icon-btn" type="button" aria-label="Switch language" title="Switch language">🇹🇭</button>
+          <button id="toggleTheme" class="icon-btn" type="button" aria-pressed="false" aria-label="Switch to dark theme" title="Switch to dark theme">🌙</button>
+        </div>
       </div>
       <div class="nav-area">
         <button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="เปิดเมนูนำทาง">
@@ -54,23 +58,27 @@
     <!-- About -->
     <section id="about" class="surface section-block">
       <h2>About Me</h2>
-      <p>I am learning to code to develop my skills as a web developer.</p>
+      <p>I'm a passionate frontend developer with a keen eye for design and user experience. I love creating beautiful, functional web applications that solve real-world problems. My journey in web development started with curiosity and has evolved into a deep passion for crafting digital experiences.</p>
+      <p>When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or enjoying the great outdoors. I believe in continuous learning and staying up-to-date with the latest trends in web development.</p>
     </section>
 
     <!-- Skills -->
     <section id="skills" class="surface section-block">
-      <h2>Skills</h2>
+      <h2>Skills & Technologies</h2>
       <ul class="tags">
-        <li>HTML</li><li>CSS</li><li>JavaScript</li>
-        <li>Git</li><li>Responsive Design</li>
+        <li>HTML5</li><li>CSS3</li><li>JavaScript (ES6+)</li><li>React</li><li>Vue.js</li>
+        <li>Node.js</li><li>Git</li><li>Responsive Design</li><li>UI/UX Design</li>
+        <li>REST APIs</li><li>Web Performance</li><li>TypeScript</li><li>Sass/SCSS</li>
       </ul>
     </section>
 
     <!-- Hobby -->
     <section id="hobby" class="surface section-block">
-      <h2>Hobby</h2>
+      <h2>Interests & Hobbies</h2>
       <ul class="tags">
-        <li>Playing Games</li><li>Watch Movies</li><li>Travel</li>
+        <li>🎮 Gaming</li><li>🎬 Movies & Series</li><li>✈️ Travel</li>
+        <li>📚 Reading Tech Blogs</li><li>🏃‍♂️ Running</li><li>🎵 Music</li>
+        <li>📷 Photography</li><li>☕ Coffee Tasting</li>
       </ul>
     </section>
 
@@ -80,37 +88,66 @@
       <div class="cards">
         <article class="card">
           <h3>Todo App</h3>
-          <p>แอปจัดการงานพร้อมกรอง ค้นหา และจัดเก็บใน LocalStorage</p>
-          <small>HTML • CSS • JavaScript</small><br>
-          <a href="#" target="_blank" rel="noopener noreferrer">Demo</a> |
-          <a href="#" target="_blank" rel="noopener noreferrer">Code</a>
+          <p>A modern task management application with filtering, search functionality, and local storage. Features dark/light theme toggle and multi-language support.</p>
+          <small>HTML • CSS • JavaScript • LocalStorage</small><br>
+          <a href="todo/" rel="noopener">Demo</a> |
+          <a href="https://github.com/LE4FEX/Portfolio/tree/main/todo" target="_blank" rel="noopener noreferrer">Code</a>
         </article>
 
         <article class="card">
           <h3>Weather App</h3>
-          <p>Realtime from OpenWeather API</p>
-          <small>JavaScript • API</small><br>
+          <p>Real-time weather application using OpenWeather API with beautiful UI, location detection, and comprehensive weather data display.</p>
+          <small>JavaScript • API Integration • PWA</small><br>
           <a href="weather/" rel="noopener">Demo</a> |
           <a href="https://github.com/LE4FEX/Portfolio/tree/main/weather" target="_blank" rel="noopener noreferrer">Code</a>
         </article>
 
         <article class="card">
           <h3>Portfolio Website</h3>
-          <p>เว็บไซต์แนะนำตัวเองและรวมผลงาน</p>
-          <small>HTML • CSS</small><br>
-          <a href="#" target="_blank" rel="noopener noreferrer">Demo</a> |
-          <a href="#" target="_blank" rel="noopener noreferrer">Code</a>
+          <p>This responsive portfolio website with dark/light theme, multi-language support, and modern glassmorphism design.</p>
+          <small>HTML • CSS • JavaScript • Responsive Design</small><br>
+          <a href="#" rel="noopener">Demo</a> |
+          <a href="https://github.com/LE4FEX/Portfolio" target="_blank" rel="noopener noreferrer">Code</a>
+        </article>
+
+        <article class="card">
+          <h3>Coming Soon</h3>
+          <p>Exciting new projects are in development. Stay tuned for more innovative web applications and tools.</p>
+          <small>React • Node.js • MongoDB</small><br>
+          <span style="color: var(--muted); font-size: 0.9rem;">In Development</span>
         </article>
       </div>
     </section>
 
     <!-- Contact -->
     <section id="contact" class="surface section-block">
-      <h2>Contact</h2>
-      <form id="contactForm">
-        <label>Name <input name="name" required></label>
-        <label>Email <input name="email" type="email" required></label>
-        <button type="submit">Submit</button>
+      <h2>Get In Touch</h2>
+      <p>I'm always interested in new opportunities and exciting projects. Let's connect and create something amazing together!</p>
+      <div class="contact-info">
+        <div class="contact-item">
+          <strong>📧 Email:</strong> <a href="mailto:thanapon@example.com">thanapon@example.com</a>
+        </div>
+        <div class="contact-item">
+          <strong>💼 LinkedIn:</strong> <a href="https://linkedin.com/in/thanapon" target="_blank" rel="noopener">linkedin.com/in/thanapon</a>
+        </div>
+        <div class="contact-item">
+          <strong>🐙 GitHub:</strong> <a href="https://github.com/LE4FEX" target="_blank" rel="noopener">github.com/LE4FEX</a>
+        </div>
+      </div>
+      <form id="contactForm" style="margin-top: 2rem;">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn primary">Send Message</button>
       </form>
     </section>
   </main>
@@ -238,6 +275,272 @@
       }
 
       syncViewport();
+    })();
+
+    // Portfolio CMS and i18n System
+    (function(){
+      // Translations
+      const translations = {
+        th: {
+          title: 'Thanapon Choysungnuen',
+          subtitle: 'นักพัฒนา Frontend ที่สร้างสรรค์ & นักนวัตกรรมดิจิทัล',
+          navAbout: 'เกี่ยวกับ',
+          navSkills: 'ทักษะ',
+          navHobby: 'งานอดิเรก',
+          navProjects: 'ผลงาน',
+          navContact: 'ติดต่อ',
+          aboutTitle: 'เกี่ยวกับฉัน',
+          aboutText1: 'ฉันเป็นนักพัฒนา Frontend ที่หลงรักการออกแบบและประสบการณ์ผู้ใช้ ฉันชอบสร้างแอปพลิเคชันเว็บที่สวยงามและมีฟังก์ชันการทำงานที่แก้ปัญหาจริงในชีวิตประจำวัน การเดินทางของฉันในวงการพัฒนาเว็บเริ่มต้นจากความอยากรู้อยากเห็นและได้พัฒนาเป็นความหลงรักอย่างลึกซึ้งในการสร้างประสบการณ์ดิจิทัล',
+          aboutText2: 'เมื่อไม่ได้เขียนโค้ด คุณจะพบฉันได้จากการสำรวจเทคโนโลยีใหม่ๆ มีส่วนร่วมในโปรเจกต์โอเพนซอร์ส หรือเพลิดเพลินกับธรรมชาติภายนอก ฉันเชื่อในการเรียนรู้อย่างต่อเนื่องและติดตามเทรนด์ล่าสุดในวงการพัฒนาเว็บ',
+          skillsTitle: 'ทักษะ & เทคโนโลยี',
+          hobbyTitle: 'ความสนใจ & งานอดิเรก',
+          projectsTitle: 'ผลงานเด่น',
+          contactTitle: 'ติดต่อฉัน',
+          contactIntro: 'ฉันสนใจโอกาสใหม่ๆ และโปรเจกต์ที่น่าสนใจเสมอ มาเชื่อมต่อกันและสร้างสรรค์สิ่งที่ยอดเยี่ยมด้วยกัน!',
+          contactFormName: 'ชื่อ',
+          contactFormEmail: 'อีเมล',
+          contactFormMessage: 'ข้อความ',
+          contactFormSubmit: 'ส่งข้อความ',
+          footer: '© 2025 Thanapon Choysungnuen',
+          editMode: 'โหมดแก้ไข',
+          saveChanges: 'บันทึกการเปลี่ยนแปลง',
+          cancelEdit: 'ยกเลิก'
+        },
+        en: {
+          title: 'Thanapon Choysungnuen',
+          subtitle: 'Creative Frontend Developer & Digital Innovator',
+          navAbout: 'About',
+          navSkills: 'Skills',
+          navHobby: 'Hobby',
+          navProjects: 'Projects',
+          navContact: 'Contact',
+          aboutTitle: 'About Me',
+          aboutText1: 'I\'m a passionate frontend developer with a keen eye for design and user experience. I love creating beautiful, functional web applications that solve real-world problems. My journey in web development started with curiosity and has evolved into a deep passion for crafting digital experiences.',
+          aboutText2: 'When I\'m not coding, you\'ll find me exploring new technologies, contributing to open-source projects, or enjoying the great outdoors. I believe in continuous learning and staying up-to-date with the latest trends in web development.',
+          skillsTitle: 'Skills & Technologies',
+          hobbyTitle: 'Interests & Hobbies',
+          projectsTitle: 'Featured Projects',
+          contactTitle: 'Get In Touch',
+          contactIntro: 'I\'m always interested in new opportunities and exciting projects. Let\'s connect and create something amazing together!',
+          contactFormName: 'Name',
+          contactFormEmail: 'Email',
+          contactFormMessage: 'Message',
+          contactFormSubmit: 'Send Message',
+          footer: '© 2025 Thanapon Choysungnuen',
+          editMode: 'Edit mode',
+          saveChanges: 'Save Changes',
+          cancelEdit: 'Cancel'
+        }
+      };
+
+      let currentLanguage = localStorage.getItem('portfolio_language') || 'en';
+      let isEditMode = false;
+
+      // Language toggle
+      const langBtn = document.getElementById('toggleLanguage');
+      if (langBtn) {
+        langBtn.addEventListener('click', toggleLanguage);
+        updateLanguageDisplay();
+      }
+
+      // Edit mode toggle
+      const editBtn = document.getElementById('editMode');
+      if (editBtn) {
+        editBtn.addEventListener('click', toggleEditMode);
+        // Show edit button if URL contains ?edit
+        if (window.location.search.includes('edit')) {
+          editBtn.style.display = 'flex';
+        }
+      }
+
+      function toggleLanguage() {
+        currentLanguage = currentLanguage === 'en' ? 'th' : 'en';
+        localStorage.setItem('portfolio_language', currentLanguage);
+        updateLanguageDisplay();
+        updateContent();
+      }
+
+      function updateLanguageDisplay() {
+        if (langBtn) {
+          langBtn.textContent = currentLanguage === 'en' ? '🇹🇭' : '🇺🇸';
+          langBtn.setAttribute('aria-label', currentLanguage === 'en' ? 'Switch to Thai' : 'Switch to English');
+          langBtn.setAttribute('title', currentLanguage === 'en' ? 'Switch to Thai' : 'Switch to English');
+        }
+      }
+
+      function updateContent() {
+        const t = translations[currentLanguage];
+
+        // Update HTML lang attribute
+        document.documentElement.lang = currentLanguage;
+
+        // Update meta
+        document.querySelector('meta[name="description"]').setAttribute('content',
+          currentLanguage === 'en'
+            ? 'Portfolio of Thanapon Choysungnuen - Creative Frontend Developer'
+            : 'ผลงานของ Thanapon Choysungnuen - นักพัฒนา Frontend ที่สร้างสรรค์'
+        );
+
+        // Update title
+        document.title = currentLanguage === 'en' ? 'Thanapon | Portfolio' : 'Thanapon | ผลงาน';
+
+        // Update header
+        document.querySelector('.brand h1').textContent = t.title;
+        document.querySelector('.brand p').textContent = t.subtitle;
+
+        // Update navigation
+        const navLinks = document.querySelectorAll('.nav-menu a');
+        if (navLinks.length >= 5) {
+          navLinks[0].textContent = t.navAbout;
+          navLinks[1].textContent = t.navSkills;
+          navLinks[2].textContent = t.navHobby;
+          navLinks[3].textContent = t.navProjects;
+          navLinks[4].textContent = t.navContact;
+        }
+
+        // Update sections
+        const aboutSection = document.querySelector('#about');
+        if (aboutSection) {
+          aboutSection.querySelector('h2').textContent = t.aboutTitle;
+          const aboutPs = aboutSection.querySelectorAll('p');
+          if (aboutPs.length >= 2) {
+            aboutPs[0].textContent = t.aboutText1;
+            aboutPs[1].textContent = t.aboutText2;
+          }
+        }
+
+        const skillsSection = document.querySelector('#skills');
+        if (skillsSection) {
+          skillsSection.querySelector('h2').textContent = t.skillsTitle;
+        }
+
+        const hobbySection = document.querySelector('#hobby');
+        if (hobbySection) {
+          hobbySection.querySelector('h2').textContent = t.hobbyTitle;
+        }
+
+        const projectsSection = document.querySelector('#projects');
+        if (projectsSection) {
+          projectsSection.querySelector('h2').textContent = t.projectsTitle;
+        }
+
+        const contactSection = document.querySelector('#contact');
+        if (contactSection) {
+          contactSection.querySelector('h2').textContent = t.contactTitle;
+          const contactPs = contactSection.querySelectorAll('p');
+          if (contactPs.length > 0) {
+            contactPs[0].textContent = t.contactIntro;
+          }
+
+          // Update form labels
+          const nameLabel = contactSection.querySelector('label[for="name"]');
+          const emailLabel = contactSection.querySelector('label[for="email"]');
+          const messageLabel = contactSection.querySelector('label[for="message"]');
+          const submitBtn = contactSection.querySelector('#contactForm button[type="submit"]');
+
+          if (nameLabel) nameLabel.textContent = t.contactFormName;
+          if (emailLabel) emailLabel.textContent = t.contactFormEmail;
+          if (messageLabel) messageLabel.textContent = t.contactFormMessage;
+          if (submitBtn) submitBtn.textContent = t.contactFormSubmit;
+        }
+
+        // Update footer
+        const footer = document.querySelector('footer');
+        if (footer) footer.textContent = t.footer;
+      }
+
+      function toggleEditMode() {
+        isEditMode = !isEditMode;
+
+        if (isEditMode) {
+          enableEditMode();
+        } else {
+          disableEditMode();
+        }
+      }
+
+      function enableEditMode() {
+        // Make content editable
+        const editableElements = document.querySelectorAll('[data-editable]');
+        editableElements.forEach(el => {
+          el.contentEditable = 'true';
+          el.classList.add('editing');
+        });
+
+        // Add save/cancel buttons
+        const headerBar = document.querySelector('.header-bar');
+        const controls = document.createElement('div');
+        controls.className = 'edit-controls';
+        controls.innerHTML = `
+          <button class="btn primary save-btn">${translations[currentLanguage].saveChanges}</button>
+          <button class="btn cancel-btn">${translations[currentLanguage].cancelEdit}</button>
+        `;
+
+        headerBar.appendChild(controls);
+
+        // Bind events
+        controls.querySelector('.save-btn').addEventListener('click', saveChanges);
+        controls.querySelector('.cancel-btn').addEventListener('click', cancelEdit);
+
+        editBtn.textContent = '💾';
+        editBtn.setAttribute('title', 'Save changes');
+      }
+
+      function disableEditMode() {
+        // Remove content editable
+        const editableElements = document.querySelectorAll('[data-editable]');
+        editableElements.forEach(el => {
+          el.contentEditable = 'false';
+          el.classList.remove('editing');
+        });
+
+        // Remove controls
+        const controls = document.querySelector('.edit-controls');
+        if (controls) controls.remove();
+
+        editBtn.textContent = '✏️';
+        editBtn.setAttribute('title', 'Edit mode');
+      }
+
+      function saveChanges() {
+        // Save content to localStorage
+        const content = {};
+        const editableElements = document.querySelectorAll('[data-editable]');
+        editableElements.forEach(el => {
+          content[el.dataset.editable] = el.innerHTML;
+        });
+
+        localStorage.setItem('portfolio_content', JSON.stringify(content));
+        disableEditMode();
+        alert('Changes saved successfully!');
+      }
+
+      function cancelEdit() {
+        // Reload content from localStorage or reset
+        loadSavedContent();
+        disableEditMode();
+      }
+
+      function loadSavedContent() {
+        const saved = localStorage.getItem('portfolio_content');
+        if (saved) {
+          const content = JSON.parse(saved);
+          Object.keys(content).forEach(key => {
+            const el = document.querySelector(`[data-editable="${key}"]`);
+            if (el) el.innerHTML = content[key];
+          });
+        }
+      }
+
+      // Initialize
+      updateContent();
+      loadSavedContent();
+
+      // Add data-editable attributes to make content editable
+      document.querySelectorAll('#about p, #skills h2, #hobby h2, #projects h2, #contact p, #contact h2').forEach((el, index) => {
+        el.setAttribute('data-editable', `section_${index}`);
+      });
+
     })();
   </script>
 </body>

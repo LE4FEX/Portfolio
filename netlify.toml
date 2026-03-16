@@ -1,3 +1,54 @@
 [build]
+    # Build settings
     publish = "."
     functions = "netlify/functions"
+
+    # Build command (not needed for static site)
+    command = "echo 'No build step required'"
+
+[build.environment]
+    # Node version for functions
+    NODE_VERSION = "18"
+
+    # OpenWeather API Key (set in Netlify dashboard)
+    # OPENWEATHER_KEY = "your_api_key_here"
+
+# Headers for security and performance
+[[headers]]
+    for = "/*"
+    [headers.values]
+        X-Frame-Options = "DENY"
+        X-XSS-Protection = "1; mode=block"
+        X-Content-Type-Options = "nosniff"
+        Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets
+[[headers]]
+    for = "/styles.css"
+    [headers.values]
+        Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+    for = "/todo/styles.css"
+    [headers.values]
+        Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+    for = "/weather/styles.css"
+    [headers.values]
+        Cache-Control = "public, max-age=31536000"
+
+# Security headers for HTML files
+[[headers]]
+    for = "/*.html"
+    [headers.values]
+        X-Frame-Options = "DENY"
+        X-XSS-Protection = "1; mode=block"
+        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.openweathermap.org;"
+
+# Redirect HTTP to HTTPS
+[[redirects]]
+    from = "http://thanapon.netlify.app/*"
+    to = "https://thanapon.netlify.app/:splat"
+    status = 301
+    force = true

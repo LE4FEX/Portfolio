@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Todo App - Thanapon</title>
+  <meta name="description" content="แอปจัดการงานพร้อมกรอง ค้นหา และจัดเก็บใน LocalStorage" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#dff3ff" />
+  <script>
+    // Set initial theme early to avoid flash
+    (function(){
+      try{
+        var root=document.documentElement;
+        var saved=localStorage.getItem('theme');
+        var prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme=saved||(prefersDark?'dark':'light');
+        var isDark=theme==='dark';
+        root.classList.toggle('dark', isDark);
+        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      }catch(e){}
+    })();
+  </script>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ส่วนหัว -->
+  <header>
+    <div class="wrap surface header-bar">
+      <div class="brand">
+        <h1>Todo App</h1>
+        <p class="muted">จัดการงานของคุณอย่างมีประสิทธิภาพ</p>
+        <div class="header-controls">
+          <button id="toggleLanguage" class="icon-btn" type="button" aria-label="Switch language" title="Switch language">🇹🇭</button>
+          <button id="toggleTheme" class="icon-btn" type="button" aria-pressed="false" aria-label="Switch to dark theme" title="Switch to dark theme">🌙</button>
+        </div>
+      </div>
+      <div class="nav-area">
+        <a href="../" class="nav-link">← กลับหน้าหลัก</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- เนื้อหา -->
+  <main class="wrap content">
+    <div class="surface section-block">
+      <div class="todo-container">
+        <!-- เพิ่มงานใหม่ -->
+        <div class="add-todo">
+          <input type="text" id="newTodoInput" placeholder="เพิ่มงานใหม่..." maxlength="100" />
+          <button id="addTodoBtn" class="btn primary">เพิ่ม</button>
+        </div>
+
+        <!-- ค้นหาและกรอง -->
+        <div class="todo-controls">
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ค้นหางาน..." />
+          </div>
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+            <button class="filter-btn" data-filter="active">ยังไม่เสร็จ</button>
+            <button class="filter-btn" data-filter="completed">เสร็จแล้ว</button>
+          </div>
+        </div>
+
+        <!-- รายการงาน -->
+        <div class="todo-list" id="todoList">
+          <!-- งานจะถูกเพิ่มที่นี่ด้วย JavaScript -->
+        </div>
+
+        <!-- สถิติ -->
+        <div class="todo-stats" id="todoStats">
+          <span id="totalTasks">0</span> งานทั้งหมด •
+          <span id="activeTasks">0</span> ยังไม่เสร็จ •
+          <span id="completedTasks">0</span> เสร็จแล้ว
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ส่วนท้าย -->
+  <footer class="wrap">© 2025 Thanapon Choysungnuen</footer>
+
+  <script src="app.js"></script>
+  <script>
+    // Theme toggle functionality (same as main page)
+    (function(){
+      var root=document.documentElement;
+      var btn=document.getElementById('toggleTheme');
+      if(!btn) return;
+
+      var themeMeta=document.querySelector('meta[name="theme-color"]');
+
+      function applyTheme(mode){
+        var dark = mode === 'dark';
+        root.classList.toggle('dark', dark);
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        btn.textContent = dark ? '☀️' : '🌙';
+        btn.setAttribute('aria-pressed', String(dark));
+        btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+        btn.title = dark ? 'Switch to light theme' : 'Switch to dark theme';
+        if(themeMeta){
+          try{
+            var styles = window.getComputedStyle(root);
+            var panel = styles.getPropertyValue('--panel').trim();
+            themeMeta.setAttribute('content', panel || (dark ? '#08233a' : '#dff3ff'));
+          }catch(e){}
+        }
+      }
+
+      function storeTheme(mode){
+        try{ localStorage.setItem('theme', mode); }
+        catch(e){}
+      }
+
+      // Get current theme
+      var currentTheme = root.getAttribute('data-theme') || (root.classList.contains('dark') ? 'dark' : 'light');
+      applyTheme(currentTheme);
+
+      btn.addEventListener('click', function(){
+        var newTheme = root.classList.contains('dark') ? 'light' : 'dark';
+        applyTheme(newTheme);
+        storeTheme(newTheme);
+      });
+    })();
+  </script>
+</body>
+</html>
