@@ -917,7 +917,7 @@ function getPreferredTheme() {
     const saved = localStorage.getItem(THEME_KEY);
     if (saved === "dark" || saved === "light") return saved;
   } catch (_) {}
-  return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "dark"; // default to dark theme for consistency with portfolio
 }
 
 function getPreferredLang() {
