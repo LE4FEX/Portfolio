@@ -65,6 +65,10 @@ body::before {
   pointer-events: none;
   z-index: -1;
 }
+
+header {
+  padding: 3rem 0 0;
+}
 .wrap {
   max-width: 1200px;
   margin: 0 auto;
